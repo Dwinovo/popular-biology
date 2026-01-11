@@ -10,6 +10,7 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import com.dwinovo.popularbiology.init.InitEntity;
+import com.dwinovo.popularbiology.init.InitMenu;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(PopularBiology.MODID)
@@ -22,8 +23,8 @@ public class PopularBiology {
 
     public PopularBiology(IEventBus modEventBus, ModContainer modContainer) {
 
-
         InitEntity.register(modEventBus);
+        InitMenu.register(modEventBus);
 
         modEventBus.addListener(InitEntity::registerAttributes);
 

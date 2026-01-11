@@ -1,0 +1,139 @@
+package com.dwinovo.popularbiology.menu;
+
+import com.dwinovo.popularbiology.entity.AbstractPet;
+import com.dwinovo.popularbiology.init.InitMenu;
+
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.DataSlot;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.SimpleContainer;
+
+public class PetBackpackMenu extends AbstractContainerMenu {
+    private static final int PLAYER_INV_X = 8;
+    private static final int PLAYER_INV_Y = 84;
+    private static final int HOTBAR_Y = 142;
+
+    private final AbstractPet pet;
+    private final int petSlotCount;
+    private final DataSlot petId = DataSlot.standalone();
+
+    public PetBackpackMenu(int containerId, Inventory playerInventory) {
+        this(containerId, playerInventory, null);
+    }
+
+    public PetBackpackMenu(int containerId, Inventory playerInventory, AbstractPet pet) {
+        super(InitMenu.PET_BACKPACK.get(), containerId);
+        this.pet = pet;
+        this.petId.set(pet != null ? pet.getId() : -1);
+        this.addDataSlot(this.petId);
+
+        SimpleContainer handler = pet != null ? pet.getBackpack() : new SimpleContainer(AbstractPet.BACKPACK_SIZE);
+        this.petSlotCount = handler.getContainerSize();
+        if (pet != null) {
+            handler.startOpen(playerInventory.player);
+        }
+        if (petSlotCount > 0) {
+            this.addSlot(new Slot(handler, 0, 8, 18));
+            int slot = 1;
+            for (int row = 0; row < 3 && slot < petSlotCount; row++) {
+                for (int col = 0; col < 5 && slot < petSlotCount; col++) {
+                    this.addSlot(new Slot(handler, slot++, 80 + col * 18, 18 + row * 18));
+                }
+            }
+        }
+
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 9; col++) {
+                this.addSlot(new Slot(playerInventory, col + row * 9 + 9, PLAYER_INV_X + col * 18, PLAYER_INV_Y + row * 18));
+            }
+        }
+
+        for (int col = 0; col < 9; col++) {
+            this.addSlot(new Slot(playerInventory, col, PLAYER_INV_X + col * 18, HOTBAR_Y));
+        }
+    }
+
+    public AbstractPet getPet() {
+        return pet;
+    }
+
+    public AbstractPet getPet(Level level) {
+        if (pet != null) {
+            return pet;
+        }
+        if (level == null) {
+            return null;
+        }
+        Entity entity = level.getEntity(petId.get());
+        return entity instanceof AbstractPet ? (AbstractPet) entity : null;
+    }
+
+    @Override
+    public boolean stillValid(Player player) {
+        return pet == null || (pet.isAlive() && player.distanceToSqr(pet) <= 64.0D);
+    }
+
+    @Override
+    public void removed(Player player) {
+        super.removed(player);
+        if (pet != null) {
+            pet.getBackpack().stopOpen(player);
+        }
+    }
+
+    @Override
+    public ItemStack quickMoveStack(Player player, int slotIndex) {
+        if (player.level().isClientSide) {
+            return ItemStack.EMPTY;
+        }
+        ItemStack result = ItemStack.EMPTY;
+        if (slotIndex < 0 || slotIndex >= this.slots.size()) {
+            return result;
+        }
+        Slot slot = this.slots.get(slotIndex);
+        if (slot != null && slot.hasItem()) {
+            ItemStack stack = slot.getItem();
+            result = stack.copy();
+
+            int playerInvStart = petSlotCount;
+            int playerInvEnd = playerInvStart + 27;
+            int hotbarEnd = playerInvEnd + 9;
+
+            if (slotIndex < petSlotCount) {
+                if (!this.moveItemStackTo(stack, playerInvStart, hotbarEnd, true)) {
+                    return ItemStack.EMPTY;
+                }
+            }
+            else {
+                if (!this.moveItemStackTo(stack, 0, petSlotCount, false)) {
+                    if (slotIndex < playerInvEnd) {
+                        if (!this.moveItemStackTo(stack, playerInvEnd, hotbarEnd, false)) {
+                            return ItemStack.EMPTY;
+                        }
+                    }
+                    else if (!this.moveItemStackTo(stack, playerInvStart, playerInvEnd, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                }
+            }
+
+            if (stack.isEmpty()) {
+                slot.set(ItemStack.EMPTY);
+            }
+            else {
+                slot.setChanged();
+            }
+            if (stack.getCount() == result.getCount()) {
+                return ItemStack.EMPTY;
+            }
+            slot.onTake(player, stack);
+            this.broadcastChanges();
+        }
+        return result;
+    }
+}
