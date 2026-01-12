@@ -28,5 +28,6 @@ public class ModItemTagsProvider extends ItemTagsProvider {
                 .add(Items.WOODEN_SWORD, Items.STONE_SWORD, Items.IRON_SWORD, Items.GOLDEN_SWORD, Items.DIAMOND_SWORD, Items.NETHERITE_SWORD);
         tag(InitTag.ENTITY_ARCHER_TOOLS)
                 .add(Items.BOW);
+                
     }
 }

@@ -12,6 +12,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.network.chat.Component;
 import com.dwinovo.popularbiology.menu.PetBackpackMenu;
+import net.minecraft.core.GlobalPos;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 
 public final class PetInteractHandler {
     private static final float TAME_CHANCE = 0.3F;
@@ -76,6 +78,12 @@ public final class PetInteractHandler {
         if (!level.isClientSide) {
             PetMode next = pet.getPetMode().next();
             pet.setPetMode(next);
+            if (next == PetMode.WORK) {
+                pet.getBrain().setMemory(MemoryModuleType.HOME, GlobalPos.of(level.dimension(), pet.blockPosition()));
+            }
+            else if (next == PetMode.FOLLOW) {
+                pet.getBrain().eraseMemory(MemoryModuleType.HOME);
+            }
             if (pet.getOwner() instanceof Player owner) {
                 owner.displayClientMessage(next.getMessage(pet), true);
             }

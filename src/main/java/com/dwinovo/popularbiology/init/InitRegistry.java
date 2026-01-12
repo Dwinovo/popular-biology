@@ -1,11 +1,11 @@
 package com.dwinovo.popularbiology.init;
 
 import com.dwinovo.popularbiology.PopularBiology;
+import com.dwinovo.popularbiology.entity.brain.handler.ArcherJobHandler;
+import com.dwinovo.popularbiology.entity.brain.handler.FarmerJobHandler;
+import com.dwinovo.popularbiology.entity.brain.handler.FencerJobHandler;
+import com.dwinovo.popularbiology.entity.brain.handler.NoneJobHandler;
 import com.dwinovo.popularbiology.entity.job.api.IPetJob;
-import com.dwinovo.popularbiology.entity.job.handler.ArcherJobHandler;
-import com.dwinovo.popularbiology.entity.job.handler.FarmerJobHandler;
-import com.dwinovo.popularbiology.entity.job.handler.FencerJobHandler;
-import com.dwinovo.popularbiology.entity.job.handler.NoneJobHandler;
 import com.dwinovo.popularbiology.entity.job.impl.BasicJob;
 import com.dwinovo.popularbiology.entity.job.impl.NoneJob;
 import java.util.function.Supplier;

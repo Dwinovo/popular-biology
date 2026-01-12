@@ -1,7 +1,7 @@
 package com.dwinovo.popularbiology.entity.job.impl;
 
 import com.dwinovo.popularbiology.entity.AbstractPet;
-import com.dwinovo.popularbiology.entity.job.handler.NoneJobHandler;
+import com.dwinovo.popularbiology.entity.brain.handler.NoneJobHandler;
 import com.dwinovo.popularbiology.entity.job.api.IPetJob;
 import net.minecraft.world.entity.ai.Brain;
 
@@ -34,6 +34,6 @@ public class NoneJob implements IPetJob {
 
     @Override
     public void tickBrain(AbstractPet pet, Brain<AbstractPet> brain) {
-        NoneJobHandler.tickBrain(pet);
+        NoneJobHandler.tickBrain(pet,brain);
     }
 }

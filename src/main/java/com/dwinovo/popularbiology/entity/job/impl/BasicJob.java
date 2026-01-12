@@ -47,6 +47,6 @@ public class BasicJob implements IPetJob {
 
     @Override
     public void tickBrain(AbstractPet pet, Brain<AbstractPet> brain) {
-        tickHandler.tick(pet);
+        tickHandler.tick(pet,brain);
     }
 }

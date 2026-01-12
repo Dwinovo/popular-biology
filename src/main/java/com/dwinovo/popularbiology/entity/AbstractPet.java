@@ -17,7 +17,6 @@ import net.minecraft.world.ContainerListener;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.InteractionHand;
@@ -25,7 +24,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.nbt.CompoundTag;
 import com.mojang.serialization.Dynamic;
 import com.dwinovo.popularbiology.PopularBiology;
-import com.dwinovo.popularbiology.menu.PetBackpackMenu;
 import com.dwinovo.popularbiology.entity.interact.PetInteractHandler;
 import com.dwinovo.popularbiology.entity.job.api.IPetJob;
 import com.dwinovo.popularbiology.init.InitRegistry;
@@ -45,10 +43,19 @@ public class AbstractPet extends TamableAnimal implements GeoEntity {
         MemoryModuleType.PATH,
         MemoryModuleType.DOORS_TO_CLOSE,
         MemoryModuleType.LOOK_TARGET,
+        MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES,
         MemoryModuleType.CANT_REACH_WALK_TARGET_SINCE,
-        MemoryModuleType.WALK_TARGET
+        MemoryModuleType.WALK_TARGET,
+        MemoryModuleType.ATTACK_TARGET,
+        MemoryModuleType.ATTACK_COOLING_DOWN,
+        MemoryModuleType.HURT_BY_ENTITY,
+        MemoryModuleType.HOME
     );
-    private static final java.util.List<net.minecraft.world.entity.ai.sensing.SensorType<? extends net.minecraft.world.entity.ai.sensing.Sensor<? super AbstractPet>>> SENSOR_TYPES = java.util.List.of();
+    private static final java.util.List<net.minecraft.world.entity.ai.sensing.SensorType<? extends net.minecraft.world.entity.ai.sensing.Sensor<? super AbstractPet>>> SENSOR_TYPES = java.util.List.of(
+        net.minecraft.world.entity.ai.sensing.SensorType.HURT_BY,
+        net.minecraft.world.entity.ai.sensing.SensorType.NEAREST_LIVING_ENTITIES,
+        com.dwinovo.popularbiology.init.InitSensor.PET_ATTACKBLE_ENTITY_SENSOR.get()
+    );
     private final AnimatableInstanceCache animatableInstanceCache = GeckoLibUtil.createInstanceCache(this);
     private final SimpleContainer backpack = new SimpleContainer(BACKPACK_SIZE);
 
@@ -183,7 +190,11 @@ public class AbstractPet extends TamableAnimal implements GeoEntity {
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         AnimationController<AbstractPet> main = new AnimationController<>(this, "main", 5, state -> {
             RawAnimation builder = RawAnimation.begin();
-            if (state.isMoving()) {
+            if (this.getPetMode() == PetMode.SIT)
+            {
+                builder.thenLoop("sit");
+            }
+            else if (state.isMoving()) {
                 builder.thenLoop("run");
             }
             else {

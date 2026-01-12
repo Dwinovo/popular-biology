@@ -24,5 +24,13 @@ public final class DataGenerators {
 
         event.getGenerator().addProvider(event.includeServer(),
                 new ModItemTagsProvider(output, lookupProvider, existingFileHelper));
+        // 注册实体标签生成器
+        event.getGenerator().addProvider(event.includeServer(), 
+            new ModEntityTagsProvider(
+                output,
+                lookupProvider,
+                existingFileHelper
+            )
+        );
     }
 }
