@@ -6,9 +6,12 @@ import com.dwinovo.popularbiology.entity.PetMode;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.network.chat.Component;
+import com.dwinovo.popularbiology.menu.PetBackpackMenu;
 
 public final class PetInteractHandler {
     private static final float TAME_CHANCE = 0.3F;
@@ -82,7 +85,10 @@ public final class PetInteractHandler {
 
     private static InteractionResult handleOpenMenu(Level level, AbstractPet pet, Player player) {
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
-            serverPlayer.openMenu(pet);
+            serverPlayer.openMenu(new SimpleMenuProvider(
+                (containerId, inventory, p) -> new PetBackpackMenu(containerId, inventory, pet),
+                Component.translatable("menu.popularbiology.pet_backpack")
+            ));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

@@ -9,5 +9,12 @@
   "popularbiology.configuration.items": "Item List",
   "popularbiology.configuration.logDirtBlock": "Log Dirt Block",
   "popularbiology.configuration.magicNumberIntroduction": "Magic Number Text",
-  "popularbiology.configuration.magicNumber": "Magic Number"
+  "popularbiology.configuration.magicNumber": "Magic Number",
+  "tooltip.popularbiology.pet_job": "Job: %s",
+  "tooltip.popularbiology.pet_job.none": "None",
+  "tooltip.popularbiology.pet_job.farmer": "Farmer",
+  "tooltip.popularbiology.pet_job.fencer": "Fencer",
+  "tooltip.popularbiology.pet_job.archer": "Archer",
+  "tooltip.popularbiology.pet_job.unknown": "Unknown",
+  "config.jade.plugin_popularbiology.pet_job": "Pet Job"
 }
