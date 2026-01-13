@@ -17,6 +17,8 @@ public class UsagiPet extends AbstractPet{
     public static AttributeSupplier.Builder createAttributes() {
         return TamableAnimal.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 20.0D)
-                .add(Attributes.MOVEMENT_SPEED, 0.3D);
+                .add(Attributes.MOVEMENT_SPEED, 0.3D)
+                .add(Attributes.ATTACK_DAMAGE, 4.0D);
     }
 }
+

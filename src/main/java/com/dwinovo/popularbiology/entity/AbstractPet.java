@@ -22,6 +22,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.nbt.CompoundTag;
+import java.util.stream.Collectors;
 import com.mojang.serialization.Dynamic;
 import com.dwinovo.popularbiology.PopularBiology;
 import com.dwinovo.popularbiology.entity.interact.PetInteractHandler;
@@ -90,6 +91,10 @@ public class AbstractPet extends TamableAnimal implements GeoEntity {
     }
 
     public void refreshJobFromMainhand() {
+        refreshJobFromMainhand(false);
+    }
+
+    private void refreshJobFromMainhand(boolean forceRefresh) {
         if (level().isClientSide) {
             return;
         }
@@ -110,7 +115,7 @@ public class AbstractPet extends TamableAnimal implements GeoEntity {
             best = InitRegistry.NONE.get();
         }
         int newJobId = best.getId();
-        if (newJobId != getPetJobId()) {
+        if (newJobId != getPetJobId() || forceRefresh) {
             setPetJobId(newJobId);
             refreshBrain((ServerLevel)this.level());
         }
@@ -140,13 +145,6 @@ public class AbstractPet extends TamableAnimal implements GeoEntity {
 
     @Override
     protected void customServerAiStep() {
-        if (tickCount % 40 == 0) {
-            PopularBiology.LOGGER.debug(
-                "[PetBrain] {} jobId={} side=server",
-                getStringUUID(),
-                getPetJobId()
-            );
-        }
         InitRegistry.getJobFromId(getPetJobId()).tickBrain(this,this.getBrain());
         Brain<AbstractPet> brain = (Brain<AbstractPet>) getBrain();
         brain.tick((ServerLevel) level(), this);
@@ -233,6 +231,7 @@ public class AbstractPet extends TamableAnimal implements GeoEntity {
         super.addAdditionalSaveData(tag);
         tag.put("Backpack", ContainerHelper.saveAllItems(new CompoundTag(), backpack.getItems(), level().registryAccess()));
         tag.putInt("PetJob", getPetJobId());
+        tag.putByte("PetMode", this.entityData.get(PET_MODE));
     }
 
     @Override
@@ -244,7 +243,10 @@ public class AbstractPet extends TamableAnimal implements GeoEntity {
         if (tag.contains("PetJob")) {
             setPetJobId(tag.getInt("PetJob"));
         }
-        refreshJobFromMainhand();
+        if (tag.contains("PetMode")) {
+            this.entityData.set(PET_MODE, tag.getByte("PetMode"));
+        }
+        refreshJobFromMainhand(true);
     }
 
     @Override
