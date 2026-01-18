@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.level.pathfinder.Path;
 import com.dwinovo.popularbiology.entity.AbstractPet;
 import com.dwinovo.popularbiology.init.InitTag;
@@ -49,6 +50,20 @@ public class Utils {
             // 判断是否是种子
             if(item.is(InitTag.ENTITY_PLANT_CROPS)) {
                 // 返回种子
+                return item;
+            }
+        }
+        return ItemStack.EMPTY;
+    }
+    /**
+     * 这个函数用于遍历宠物背包获取可用的箭矢
+     * @param pet: 生物
+     * @return: 箭矢
+     */
+    public static ItemStack getArrow(AbstractPet pet) {
+        for (int i = 0; i < pet.getBackpack().getContainerSize(); i++) {
+            ItemStack item = pet.getBackpack().getItem(i);
+            if (ProjectileWeaponItem.ARROW_ONLY.test(item)) {
                 return item;
             }
         }

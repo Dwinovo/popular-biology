@@ -7,10 +7,12 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerListener;
@@ -18,6 +20,7 @@ import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -29,6 +32,8 @@ import com.dwinovo.popularbiology.entity.interact.PetInteractHandler;
 import com.dwinovo.popularbiology.entity.job.api.IPetJob;
 import com.dwinovo.popularbiology.init.InitMemory;
 import com.dwinovo.popularbiology.init.InitRegistry;
+import com.dwinovo.popularbiology.utils.Utils;
+
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -38,8 +43,14 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.server.level.ServerLevel;
+import net.neoforged.neoforge.common.CommonHooks;
+import net.minecraft.world.item.ProjectileWeaponItem;
 
-public class AbstractPet extends TamableAnimal implements GeoEntity {
+public class AbstractPet extends TamableAnimal implements GeoEntity, RangedAttackMob {
     public static final int BACKPACK_SIZE = 16;
     private static final EntityDataAccessor<Byte> PET_MODE = SynchedEntityData.defineId(AbstractPet.class, EntityDataSerializers.BYTE);
     private static final EntityDataAccessor<Integer> PET_JOB = SynchedEntityData.defineId(AbstractPet.class, EntityDataSerializers.INT);
@@ -171,10 +182,33 @@ public class AbstractPet extends TamableAnimal implements GeoEntity {
         return (Brain<AbstractPet>) super.getBrain();
     }
 
+
     @Override
-    protected void pushEntities() {
-        // TODO Auto-generated method stub
-        super.pushEntities();
+    public void performRangedAttack(LivingEntity target, float distanceFactor) {
+        if (!(level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        ItemStack weapon = getMainHandItem();
+        if (!(weapon.getItem() instanceof ProjectileWeaponItem)) {
+            return;
+        }
+        ItemStack fallbackAmmo = Utils.getArrow(this);
+        ItemStack ammo = CommonHooks.getProjectile(this, weapon, fallbackAmmo);
+        if (ammo.isEmpty() || !(ammo.getItem() instanceof ArrowItem arrowItem)) {
+            return;
+        }
+        AbstractArrow arrow = arrowItem.createArrow(serverLevel, ammo, this, weapon);
+        Vec3 from = getEyePosition();
+        Vec3 to = target.getEyePosition();
+        Vec3 delta = to.subtract(from);
+        float inaccuracy = 14 - serverLevel.getDifficulty().getId() * 4;
+        arrow.shoot(delta.x, delta.y + Math.sqrt(delta.x * delta.x + delta.z * delta.z) * 0.2F, delta.z, 1.6F, inaccuracy);
+        arrow.setOwner(this);
+        serverLevel.addFreshEntity(arrow);
+        if (!arrowItem.isInfinite(ammo, weapon, this)) {
+            ammo.shrink(1);
+        }
+        playSound(SoundEvents.SKELETON_SHOOT, 1.0F, 1.0F / (getRandom().nextFloat() * 0.4F + 0.8F));
     }
 
 

@@ -39,6 +39,7 @@ public class PetAttackbleEntitySensor extends Sensor<AbstractPet> {
          * 5.当前的攻击目标是否符合InitTag
          */
         if (pet.getPetMode() != PetMode.WORK) {
+            pet.getBrain().eraseMemory(MemoryModuleType.ATTACK_TARGET);
             return;
         }
         int jobId = pet.getPetJobId();
