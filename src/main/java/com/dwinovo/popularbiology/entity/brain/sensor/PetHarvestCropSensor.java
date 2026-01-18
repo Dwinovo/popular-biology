@@ -7,13 +7,11 @@ import com.dwinovo.popularbiology.entity.PetMode;
 import net.minecraft.server.level.ServerLevel;
 import java.util.Set;
 import com.google.common.collect.ImmutableSet;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import com.dwinovo.popularbiology.init.InitMemory;
 import com.dwinovo.popularbiology.init.InitRegistry;
 import com.dwinovo.popularbiology.utils.BlockSearch;
 import com.dwinovo.popularbiology.utils.Utils;
-
-import net.minecraft.core.GlobalPos;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 
 // 这个类用于检测周围是否有可以收获的作物
 public class PetHarvestCropSensor extends Sensor<AbstractPet>{
@@ -34,6 +32,17 @@ public class PetHarvestCropSensor extends Sensor<AbstractPet>{
     @Override
     protected void doTick(ServerLevel level, AbstractPet entity) {
         //只有当处于工作状态，并且职业为农民，并且Action为0，才进行检测
+        if (entity.getPetMode() != PetMode.WORK || entity.getPetJobId() != InitRegistry.FARMER_ID) {
+            entity.getBrain().eraseMemory(InitMemory.HARVEST_POS.get());
+            return;
+        }
+        if (entity.getBrain().getMemory(InitMemory.HARVEST_POS.get()).isPresent()) {
+            net.minecraft.core.BlockPos current = entity.getBrain().getMemory(InitMemory.HARVEST_POS.get()).get();
+            if (Utils.canHarvesr(level, current) && Utils.canReach(entity, current)) {
+                return;
+            }
+            entity.getBrain().eraseMemory(InitMemory.HARVEST_POS.get());
+        }
         if(entity.getPetMode() == PetMode.WORK && entity.getPetJobId() == InitRegistry.FARMER_ID){
             // 螺旋式检测周围是否有可以收获的作物，要求符合InitTag.ENTITY_HARVEST_CROP标签，并且可以到达
             BlockSearch.spiralBlockSearch(level, entity, MAX_RADIUS, VERTICAL_RANGE,
@@ -44,7 +53,6 @@ public class PetHarvestCropSensor extends Sensor<AbstractPet>{
             ).ifPresentOrElse(foundPos -> {
                 //设置记忆
                 entity.getBrain().setMemory(InitMemory.HARVEST_POS.get(), foundPos);
-                entity.getBrain().setMemory(MemoryModuleType.HOME, GlobalPos.of(level.dimension(), foundPos));
             }, () -> {
                 //否则清除记忆
                 entity.getBrain().eraseMemory(InitMemory.HARVEST_POS.get());

@@ -22,6 +22,9 @@ public final class InitMemory {
     public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<BlockPos>> CONTAINER_POS =
         MEMORY_TYPES.register("container_pos", () -> new MemoryModuleType<>(Optional.of(BlockPos.CODEC)));
 
+    public static final DeferredHolder<MemoryModuleType<?>, MemoryModuleType<net.minecraft.world.entity.item.ItemEntity>> PICKABLE_ITEM =
+        MEMORY_TYPES.register("pickable_item", () -> new MemoryModuleType<>(Optional.empty()));
+
     private InitMemory() {
     }
 

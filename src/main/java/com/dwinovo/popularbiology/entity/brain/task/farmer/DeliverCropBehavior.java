@@ -14,6 +14,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.ai.behavior.Behavior;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
@@ -22,14 +23,18 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 // 这个任务用于将作物传输到容器中
-public class DeliverCropTask extends Behavior<AbstractPet> {
+public class DeliverCropBehavior extends Behavior<AbstractPet> {
     // 日志
     @SuppressWarnings("unused")
-    private static final Logger LOGGER = LoggerFactory.getLogger(DeliverCropTask.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DeliverCropBehavior.class);
+    private boolean didOpen;
+    private BlockPos openContainerPos;
     // 需要记忆的模块
     private static final Map<MemoryModuleType<?>, MemoryStatus> REQUIRED_MEMORIES = ImmutableMap.of(
         InitMemory.CONTAINER_POS.get(), MemoryStatus.VALUE_PRESENT
@@ -38,7 +43,7 @@ public class DeliverCropTask extends Behavior<AbstractPet> {
     /**
      * 这个构造函数用于初始化任务
      */
-    public DeliverCropTask() {
+    public DeliverCropBehavior() {
         // 超时时间3000tick
         super(REQUIRED_MEMORIES, 3000);
     }
@@ -87,16 +92,20 @@ public class DeliverCropTask extends Behavior<AbstractPet> {
     @Override
     protected void start(ServerLevel world, AbstractPet pet, long time) {
         try {
+            this.didOpen = true;
             // 获取容器位置并触发箱子打开
             Optional<BlockPos> containerPosOpt = pet.getBrain().getMemory(InitMemory.CONTAINER_POS.get());
             if (containerPosOpt.isPresent()) {
                 BlockPos containerPos = containerPosOpt.get();
+                this.openContainerPos = containerPos;
                 BlockEntity blockEntity = world.getBlockEntity(containerPos);
                 if (blockEntity instanceof ChestBlockEntity) {
                     world.playSound(null, containerPos.getX(), containerPos.getY(), containerPos.getZ(),
                         SoundEvents.CHEST_OPEN, SoundSource.BLOCKS, 1.0F, 1.0F);
                     world.blockEvent(containerPos, world.getBlockState(containerPos).getBlock(), 1, 1);
                 }
+            } else {
+                this.openContainerPos = null;
             }
         } catch (Exception e) {
             LOGGER.error("DeliverCropTask start error", e);
@@ -128,10 +137,11 @@ public class DeliverCropTask extends Behavior<AbstractPet> {
         if (!world.getBlockState(containerPos).is(InitTag.ENTITY_DELEVER_CONTAINER)) {
             return false;
         }
-        if (!hasTaggedItem(pet.getBackpack(), InitTag.ENTITY_DELIVER_ITEMS)) {
+        if (pet.distanceToSqr(Vec3.atCenterOf(containerPos)) > 9.0D) {
             return false;
         }
-        return canInsertContainer(world, containerPos, pet.getBackpack(), InitTag.ENTITY_DELIVER_ITEMS);
+        return hasTaggedItem(pet.getBackpack(), InitTag.ENTITY_DELIVER_ITEMS)
+            && canInsertContainer(world, containerPos, pet.getBackpack(), InitTag.ENTITY_DELIVER_ITEMS);
     }
 
     /**
@@ -151,14 +161,22 @@ public class DeliverCropTask extends Behavior<AbstractPet> {
             return;
         }
         BlockPos containerPos = containerPosOpt.get();
-        // 获得容器
-        BlockEntity blockEntity = world.getBlockEntity(containerPos);
-        if (!(blockEntity instanceof Container container)) {
+        ItemStack sourceStack = findFirstTaggedItem(pet.getBackpack(), InitTag.ENTITY_DELIVER_ITEMS);
+        if (sourceStack.isEmpty()) {
+            closeIfFinished(world, pet, containerPos);
             return;
         }
 
-        ItemStack sourceStack = findFirstTaggedItem(pet.getBackpack(), InitTag.ENTITY_DELIVER_ITEMS);
-        if (sourceStack.isEmpty()) {
+        IItemHandler handler = findItemHandler(world, containerPos);
+        if (handler != null) {
+            if (tryInsertOne(handler, sourceStack)) {
+                closeIfFinished(world, pet, containerPos);
+                return;
+            }
+        }
+
+        BlockEntity blockEntity = world.getBlockEntity(containerPos);
+        if (!(blockEntity instanceof Container container)) {
             return;
         }
 
@@ -181,6 +199,7 @@ public class DeliverCropTask extends Behavior<AbstractPet> {
         if (remaining.getCount() < 1) {
             sourceStack.shrink(1);
             container.setChanged();
+            closeIfFinished(world, pet, containerPos);
         }
     }
 
@@ -198,15 +217,17 @@ public class DeliverCropTask extends Behavior<AbstractPet> {
         // 安全获取容器位置 
         Optional<BlockPos> containerPosOpt = pet.getBrain().getMemory(InitMemory.CONTAINER_POS.get());
         // 如果容器位置不为空
-        if (containerPosOpt.isPresent()) {
-            BlockPos containerPos = containerPosOpt.get();
-            BlockEntity blockEntity = world.getBlockEntity(containerPos);
-            if (blockEntity instanceof ChestBlockEntity) {
-                world.playSound(null, containerPos.getX(), containerPos.getY(), containerPos.getZ(),
-                    SoundEvents.CHEST_CLOSE, SoundSource.BLOCKS, 1.0F, 1.0F);
-                world.blockEvent(containerPos, world.getBlockState(containerPos).getBlock(), 1, 0);
+        if (this.didOpen) {
+            BlockPos containerPos = this.openContainerPos;
+            if (containerPos == null && containerPosOpt.isPresent()) {
+                containerPos = containerPosOpt.get();
+            }
+            if (containerPos != null) {
+                closeChest(world, containerPos);
             }
         }
+        this.didOpen = false;
+        this.openContainerPos = null;
     }
 
     private static boolean hasTaggedItem(Container container, TagKey<Item> tag) {
@@ -230,6 +251,24 @@ public class DeliverCropTask extends Behavior<AbstractPet> {
     }
 
     private static boolean canInsertContainer(ServerLevel level, BlockPos pos, Container source, TagKey<Item> tag) {
+        IItemHandler handler = findItemHandler(level, pos);
+        if (handler != null) {
+            for (int i = 0; i < source.getContainerSize(); i++) {
+                ItemStack stack = source.getItem(i);
+                if (stack.isEmpty() || !stack.is(tag)) {
+                    continue;
+                }
+                ItemStack testStack = stack.copy();
+                testStack.setCount(1);
+                for (int slot = 0; slot < handler.getSlots(); slot++) {
+                    ItemStack remaining = handler.insertItem(slot, testStack, true);
+                    if (remaining.isEmpty()) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (!(blockEntity instanceof Container container)) {
             return false;
@@ -251,5 +290,52 @@ public class DeliverCropTask extends Behavior<AbstractPet> {
             }
         }
         return false;
+    }
+
+    private static IItemHandler findItemHandler(ServerLevel level, BlockPos pos) {
+        IItemHandler handler = level.getCapability(Capabilities.ItemHandler.BLOCK, pos, null);
+        if (handler != null) {
+            return handler;
+        }
+        for (Direction direction : Direction.values()) {
+            handler = level.getCapability(Capabilities.ItemHandler.BLOCK, pos, direction);
+            if (handler != null) {
+                return handler;
+            }
+        }
+        return null;
+    }
+
+    private static boolean tryInsertOne(IItemHandler handler, ItemStack sourceStack) {
+        ItemStack toInsert = sourceStack.copy();
+        toInsert.setCount(1);
+        for (int slot = 0; slot < handler.getSlots(); slot++) {
+            ItemStack remaining = handler.insertItem(slot, toInsert, false);
+            if (remaining.isEmpty()) {
+                sourceStack.shrink(1);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void closeChest(ServerLevel world, BlockPos containerPos) {
+        BlockEntity blockEntity = world.getBlockEntity(containerPos);
+        if (blockEntity instanceof ChestBlockEntity) {
+            world.playSound(null, containerPos.getX(), containerPos.getY(), containerPos.getZ(),
+                SoundEvents.CHEST_CLOSE, SoundSource.BLOCKS, 1.0F, 1.0F);
+            world.blockEvent(containerPos, world.getBlockState(containerPos).getBlock(), 1, 0);
+        }
+    }
+
+    private void closeIfFinished(ServerLevel world, AbstractPet pet, BlockPos containerPos) {
+        boolean hasItems = hasTaggedItem(pet.getBackpack(), InitTag.ENTITY_DELIVER_ITEMS);
+        if (hasItems && canInsertContainer(world, containerPos, pet.getBackpack(), InitTag.ENTITY_DELIVER_ITEMS)) {
+            return;
+        }
+        pet.getBrain().eraseMemory(InitMemory.CONTAINER_POS.get());
+        closeChest(world, containerPos);
+        this.didOpen = false;
+        this.openContainerPos = null;
     }
 }

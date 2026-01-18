@@ -15,6 +15,7 @@ public final class InitTag {
     public static final TagKey<Item> ENTITY_ARCHER_TOOLS = tag("entity_archer_tools");
     public static final TagKey<Item> ENTITY_PLANT_CROPS = tag("entity_plant_crops");
     public static final TagKey<Item> ENTITY_DELIVER_ITEMS = tag("entity_deliver_items");
+    public static final TagKey<Item> ENTITY_PICKABLE_ITEMS = tag("entity_pickable_items");
 
     public static final TagKey<EntityType<?>> ENTITY_HOSTILE_ENTITY = tagEntity("entity_hostile_entity");
 

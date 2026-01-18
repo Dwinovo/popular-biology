@@ -10,8 +10,8 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import java.util.Optional;
 
+import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.behavior.Behavior;
-import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 
@@ -19,16 +19,14 @@ import net.minecraft.server.level.ServerLevel;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 // 这个类用于种植作物
-public class PlantCropTask extends Behavior<AbstractPet>{
+public class PlantCropBehavior extends Behavior<AbstractPet>{
    
-    private int actionTime = 100;
     // 需要检测的记忆类型
     private static final Map<MemoryModuleType<?>, MemoryStatus> REQUIRED_MEMORIES = ImmutableMap.of(
         InitMemory.PLANT_POS.get(), MemoryStatus.VALUE_PRESENT
@@ -36,8 +34,8 @@ public class PlantCropTask extends Behavior<AbstractPet>{
     /**
      * 这个函数用于初始化任务
      */
-    public PlantCropTask() {
-        super(REQUIRED_MEMORIES,20);
+    public PlantCropBehavior() {
+        super(REQUIRED_MEMORIES, 100);
     }
     /**
      * 这个函数用于检查是否可以开始任务
@@ -71,13 +69,24 @@ public class PlantCropTask extends Behavior<AbstractPet>{
         return false;
     }
     @Override
-    protected void tick(ServerLevel pLevel, AbstractPet pOwner, long pGameTime) {
-        // 单纯是为了让宠物Action保持20个tick执行动作
-        actionTime--;
-    }
-    @Override
-    protected boolean canStillUse(ServerLevel pLevel, AbstractPet pEntity, long pGameTime) {
-        return actionTime > 0 ;
+    protected boolean canStillUse(ServerLevel world, AbstractPet pet, long time) {
+        if (!super.canStillUse(world, pet, time)) {
+            return false;
+        }
+        if (pet.getPetMode() != PetMode.WORK || pet.getPetJobId() != InitRegistry.FARMER_ID) {
+            return false;
+        }
+        if (pet.getBrain().getMemory(InitMemory.HARVEST_POS.get()).isPresent()) {
+            return false;
+        }
+        Optional<BlockPos> farmlandPosOpt = pet.getBrain().getMemory(InitMemory.PLANT_POS.get());
+        if (farmlandPosOpt.isEmpty()) {
+            return false;
+        }
+        BlockPos farmlandPos = farmlandPosOpt.get();
+        return Utils.isCanPlantFarmland(world, farmlandPos)
+            && pet.distanceToSqr(Vec3.atCenterOf(farmlandPos)) <= 2.0D
+            && !Utils.getSeed(pet).isEmpty();
     }
     /**
      * 这个函数用于开始任务
@@ -87,18 +96,6 @@ public class PlantCropTask extends Behavior<AbstractPet>{
      */
     @Override
     protected void start(ServerLevel world, AbstractPet pet, long time) {
-
-        // 获取生物的Brain  
-        Brain<AbstractPet> brain = pet.getBrain();
-        // 安全获取耕地位置
-        Optional<BlockPos> farmlandPosOpt = brain.getMemory(InitMemory.PLANT_POS.get());
-        // 如果耕地位置为空
-        if(farmlandPosOpt.isEmpty()) return;
-        // 获取耕地位置
-        BlockPos farmlandPos = farmlandPosOpt.get();
-        // 设置生物的LookTarget
-        BehaviorUtils.setWalkAndLookTargetMemories(pet, farmlandPos, 1.0F, 0);
-        
     }
     /**
      * 这个函数在任务停止的时候调用
@@ -129,8 +126,6 @@ public class PlantCropTask extends Behavior<AbstractPet>{
         }
         // 清除耕地位置记忆
         pet.getBrain().eraseMemory(InitMemory.PLANT_POS.get());
-
-        this.actionTime = 100;
     }
 
     private static Optional<BlockState> getPlantBlockState(ItemStack seed) {
@@ -147,5 +142,3 @@ public class PlantCropTask extends Behavior<AbstractPet>{
         return Optional.empty();
     }
 }
-
-

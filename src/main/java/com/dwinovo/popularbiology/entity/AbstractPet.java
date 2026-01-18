@@ -36,6 +36,8 @@ import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.wrapper.InvWrapper;
 
 public class AbstractPet extends TamableAnimal implements GeoEntity {
     public static final int BACKPACK_SIZE = 16;
@@ -54,7 +56,8 @@ public class AbstractPet extends TamableAnimal implements GeoEntity {
         MemoryModuleType.HOME,
         InitMemory.HARVEST_POS.get(),
         InitMemory.PLANT_POS.get(),
-        InitMemory.CONTAINER_POS.get()
+        InitMemory.CONTAINER_POS.get(),
+        InitMemory.PICKABLE_ITEM.get()
     );
     private static final java.util.List<net.minecraft.world.entity.ai.sensing.SensorType<? extends net.minecraft.world.entity.ai.sensing.Sensor<? super AbstractPet>>> SENSOR_TYPES = java.util.List.of(
         net.minecraft.world.entity.ai.sensing.SensorType.HURT_BY,
@@ -62,10 +65,12 @@ public class AbstractPet extends TamableAnimal implements GeoEntity {
         com.dwinovo.popularbiology.init.InitSensor.PET_ATTACKBLE_ENTITY_SENSOR.get(),
         com.dwinovo.popularbiology.init.InitSensor.PET_HARVEST_CROP_SENSOR.get(),
         com.dwinovo.popularbiology.init.InitSensor.PET_PLANT_CROP_SENSOR.get(),
-        com.dwinovo.popularbiology.init.InitSensor.PET_CONTAINER_SENSOR.get()
+        com.dwinovo.popularbiology.init.InitSensor.PET_CONTAINER_SENSOR.get(),
+        com.dwinovo.popularbiology.init.InitSensor.PET_ITEM_ENTITY_SENSOR.get()
     );
     private final AnimatableInstanceCache animatableInstanceCache = GeckoLibUtil.createInstanceCache(this);
     private final SimpleContainer backpack = new SimpleContainer(BACKPACK_SIZE);
+    private final IItemHandler backpackHandler = new InvWrapper(backpack);
 
     protected AbstractPet(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
@@ -79,6 +84,10 @@ public class AbstractPet extends TamableAnimal implements GeoEntity {
 
     public SimpleContainer getBackpack() {
         return backpack;
+    }
+
+    public IItemHandler getBackpackHandler() {
+        return backpackHandler;
     }
 
     public PetMode getPetMode() {
@@ -161,6 +170,13 @@ public class AbstractPet extends TamableAnimal implements GeoEntity {
     public Brain<AbstractPet> getBrain() {
         return (Brain<AbstractPet>) super.getBrain();
     }
+
+    @Override
+    protected void pushEntities() {
+        // TODO Auto-generated method stub
+        super.pushEntities();
+    }
+
 
 
     @Override

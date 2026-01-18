@@ -4,6 +4,7 @@ import com.dwinovo.popularbiology.PopularBiology;
 import com.dwinovo.popularbiology.entity.brain.sensor.PetAttackbleEntitySensor;
 import com.dwinovo.popularbiology.entity.brain.sensor.PetContainerSensor;
 import com.dwinovo.popularbiology.entity.brain.sensor.PetHarvestCropSensor;
+import com.dwinovo.popularbiology.entity.brain.sensor.PetPickableItemSensor;
 import com.dwinovo.popularbiology.entity.brain.sensor.PetPlantCropSensor;
 
 import net.minecraft.core.registries.Registries;
@@ -24,6 +25,8 @@ public final class InitSensor {
         SENSOR_TYPES.register("pet_plant_crop_sensor", () -> new SensorType<>(PetPlantCropSensor::new));
     public static final DeferredHolder<SensorType<?>, SensorType<PetContainerSensor>> PET_CONTAINER_SENSOR =
         SENSOR_TYPES.register("pet_container_sensor", () -> new SensorType<>(PetContainerSensor::new));
+    public static final DeferredHolder<SensorType<?>, SensorType<PetPickableItemSensor>> PET_ITEM_ENTITY_SENSOR =
+        SENSOR_TYPES.register("pet_item_entity_sensor", () -> new SensorType<>(PetPickableItemSensor::new));
 
     private InitSensor() {
     }

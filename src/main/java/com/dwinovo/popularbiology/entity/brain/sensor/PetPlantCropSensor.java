@@ -38,6 +38,17 @@ public class PetPlantCropSensor extends Sensor<AbstractPet> {
     protected void doTick(ServerLevel level, AbstractPet pet) {
         //只有在工作状态，并且职业为农民，并且背包里面有种子，才进行检测
         boolean hasSeed = !Utils.getSeed(pet).isEmpty();
+        if (pet.getPetMode() != PetMode.WORK || pet.getPetJobId() != InitRegistry.FARMER_ID || !hasSeed) {
+            pet.getBrain().eraseMemory(InitMemory.PLANT_POS.get());
+            return;
+        }
+        if (pet.getBrain().getMemory(InitMemory.PLANT_POS.get()).isPresent()) {
+            net.minecraft.core.BlockPos current = pet.getBrain().getMemory(InitMemory.PLANT_POS.get()).get();
+            if (Utils.isCanPlantFarmland(level, current) && Utils.canReach(pet, current)) {
+                return;
+            }
+            pet.getBrain().eraseMemory(InitMemory.PLANT_POS.get());
+        }
         if(pet.getPetMode() == PetMode.WORK && pet.getPetJobId() == InitRegistry.FARMER_ID
             && hasSeed){
             // 有收获任务时不检测

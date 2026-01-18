@@ -42,6 +42,13 @@ public class ModItemTagsProvider extends ItemTagsProvider {
             .add(Items.CARROT)
             .add(Items.MELON_SLICE)
             .add(Items.PUMPKIN);
+        tag(InitTag.ENTITY_PICKABLE_ITEMS)
+            .add(Items.WHEAT, Items.WHEAT_SEEDS)
+            .add(Items.POTATO)
+            .add(Items.CARROT)
+            .add(Items.BEETROOT)
+            .add(Items.MELON_SLICE)
+            .add(Items.PUMPKIN);
             
                 
     }

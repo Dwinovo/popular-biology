@@ -12,6 +12,7 @@ import com.dwinovo.popularbiology.init.InitMenu;
 import com.dwinovo.popularbiology.init.InitRegistry;
 import com.dwinovo.popularbiology.init.InitSensor;
 import com.dwinovo.popularbiology.init.InitActivity;
+import com.dwinovo.popularbiology.init.InitCapabilities;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(PopularBiology.MODID)
@@ -30,6 +31,7 @@ public class PopularBiology {
         InitRegistry.register(modEventBus);
         InitSensor.register(modEventBus);
         InitActivity.register(modEventBus);
+        InitCapabilities.register(modEventBus);
 
         modEventBus.addListener(InitEntity::registerAttributes);
 

@@ -2,6 +2,7 @@ package com.dwinovo.popularbiology.utils;
 
 import com.dwinovo.popularbiology.entity.AbstractPet;
 import com.dwinovo.popularbiology.entity.brain.task.tameable.KeepAroundBehavior;
+import com.dwinovo.popularbiology.entity.brain.task.tameable.PickUpItemTask;
 import com.dwinovo.popularbiology.entity.brain.task.tameable.RandomWalkTask;
 import com.dwinovo.popularbiology.entity.brain.task.tameable.SitBehavior;
 import com.google.common.collect.ImmutableList;
@@ -27,8 +28,9 @@ public final class BrainUtils {
         Pair<Integer, BehaviorControl<? super AbstractPet>> sit = Pair.of(0, new SitBehavior<>());
         Pair<Integer, BehaviorControl<? super AbstractPet>> keepAround = Pair.of(2, new KeepAroundBehavior<>(7, 13, 20));
         Pair<Integer, BehaviorControl<? super AbstractPet>> walkToTarget = Pair.of(1, new MoveToTargetSink());
-        Pair<Integer, BehaviorControl<? super AbstractPet>> look = Pair.of(0, new LookAtTargetSink(45, 90));
-        brain.addActivity(Activity.CORE, ImmutableList.of(look, sit, keepAround, walkToTarget));
+        Pair<Integer, BehaviorControl<? super AbstractPet>> look = Pair.of(0, new LookAtTargetSink(45, 45));
+        Pair<Integer, BehaviorControl<? super AbstractPet>> pickitem = Pair.of(3, new PickUpItemTask(0.7f));
+        brain.addActivity(Activity.CORE, ImmutableList.of(look, sit, keepAround, walkToTarget,pickitem));
     }
 
     public static void addIdleTasks(Brain<AbstractPet> brain) {

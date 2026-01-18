@@ -1,12 +1,12 @@
 package com.dwinovo.popularbiology.entity.brain.handler;
 
 import com.dwinovo.popularbiology.entity.AbstractPet;
-import com.dwinovo.popularbiology.entity.brain.task.farmer.DeliverCropTask;
+import com.dwinovo.popularbiology.entity.brain.task.farmer.DeliverCropBehavior;
 import com.dwinovo.popularbiology.entity.brain.task.farmer.HarvestCropBehavior;
-import com.dwinovo.popularbiology.entity.brain.task.farmer.PlantCropTask;
-import com.dwinovo.popularbiology.entity.brain.task.farmer.WalkToContainerTask;
-import com.dwinovo.popularbiology.entity.brain.task.farmer.WalkToHarvestCropTask;
-import com.dwinovo.popularbiology.entity.brain.task.farmer.WalkToPlantCropTask;
+import com.dwinovo.popularbiology.entity.brain.task.farmer.PlantCropBehavior;
+import com.dwinovo.popularbiology.entity.brain.task.farmer.WalkToContainerBehavior;
+import com.dwinovo.popularbiology.entity.brain.task.farmer.WalkToHarvestCropBehavior;
+import com.dwinovo.popularbiology.entity.brain.task.farmer.WalkToPlantCropBehavior;
 import com.dwinovo.popularbiology.init.InitActivity;
 import com.dwinovo.popularbiology.init.InitMemory;
 import com.dwinovo.popularbiology.utils.BrainUtils;
@@ -49,19 +49,19 @@ public final class FarmerJobHandler {
         //优先级：
         //1.FARM_HARVEST
         //必须HarvestPos存在时
-        if(brain.getMemory(InitMemory.HARVEST_POS.get()).isPresent())
+        if (brain.hasMemoryValue(InitMemory.HARVEST_POS.get()))
         {
             activities.add(InitActivity.FARMER_HARVEST.get());
         }
         //2.FARM_PLANT
         //必须PlantPos存在时
-        if(brain.getMemory(InitMemory.PLANT_POS.get()).isPresent())
+        if (brain.hasMemoryValue(InitMemory.PLANT_POS.get()))
         {
             activities.add(InitActivity.FARMER_PLANT.get());
         }
         //3.DELEVER
         //必须ContainerPos存在时
-        if(brain.getMemory(InitMemory.CONTAINER_POS.get()).isPresent())
+        if (brain.hasMemoryValue(InitMemory.CONTAINER_POS.get()))
         {
             activities.add(InitActivity.DELEVER.get());
         }
@@ -72,13 +72,13 @@ public final class FarmerJobHandler {
     }
 
     private static Activity getPreferredActivity(Brain<AbstractPet> brain) {
-        if (brain.getMemory(InitMemory.HARVEST_POS.get()).isPresent()) {
+        if (brain.hasMemoryValue(InitMemory.HARVEST_POS.get())) {
             return InitActivity.FARMER_HARVEST.get();
         }
-        if (brain.getMemory(InitMemory.PLANT_POS.get()).isPresent()) {
+        if (brain.hasMemoryValue(InitMemory.PLANT_POS.get())) {
             return InitActivity.FARMER_PLANT.get();
         }
-        if (brain.getMemory(InitMemory.CONTAINER_POS.get()).isPresent()) {
+        if (brain.hasMemoryValue(InitMemory.CONTAINER_POS.get())) {
             return InitActivity.DELEVER.get();
         }
         return Activity.IDLE;
@@ -90,25 +90,25 @@ public final class FarmerJobHandler {
             // 收获任务
             Pair.of(3, new HarvestCropBehavior()),
             // 移动到收获任务
-            Pair.of(4, new WalkToHarvestCropTask(0.8F))
+            Pair.of(4, new WalkToHarvestCropBehavior(0.8F))
         ));
     }
     private static void addFarmPlantActivity(Brain<AbstractPet> brain) {
         // 添加种植任务
         brain.addActivity(InitActivity.FARMER_PLANT.get(), ImmutableList.of(
             // 种植任务
-            Pair.of(3, new PlantCropTask()),
+            Pair.of(3, new PlantCropBehavior()),
             // 移动到种植任务
-            Pair.of(4, new WalkToPlantCropTask(0.8F))
+            Pair.of(4, new WalkToPlantCropBehavior(0.8F))
         ));
     }
     private static void addDeliverActivity(Brain<AbstractPet> brain,AbstractPet pet) {
         // 添加传递任务
         brain.addActivity(InitActivity.DELEVER.get(), ImmutableList.of(
             // 传递任务
-            Pair.of(3, new DeliverCropTask()),
+            Pair.of(3, new DeliverCropBehavior()),
             // 移动到传递任务
-            Pair.of(4, new WalkToContainerTask(0.8F))
+            Pair.of(4, new WalkToContainerBehavior(0.8F))
         ));
     }
 }
