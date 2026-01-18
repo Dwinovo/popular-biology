@@ -31,6 +31,7 @@ public final class FarmerJobHandler {
         addDeliverActivity(brain,pet);
 
         brain.setCoreActivities(ImmutableSet.of(Activity.CORE));
+        brain.setDefaultActivity(Activity.IDLE);
         
         
     }

@@ -11,12 +11,9 @@ import java.util.Set;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.Sensor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 // 这个类用于检测周围是否有可以种植的耕地
 public class PetPlantCropSensor extends Sensor<AbstractPet> {
-
     // 最大半径
     private static final int MAX_RADIUS = 5;
     // 垂直范围

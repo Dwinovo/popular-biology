@@ -13,15 +13,10 @@ import com.dwinovo.popularbiology.init.InitRegistry;
 import com.dwinovo.popularbiology.utils.BlockSearch;
 import com.dwinovo.popularbiology.utils.Utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import net.minecraft.core.GlobalPos;
 
 // 这个类用于检测周围是否有可以收获的作物
 public class PetHarvestCropSensor extends Sensor<AbstractPet>{
-    // 日志记录器
-    @SuppressWarnings("unused")
-    private static final Logger LOGGER = LoggerFactory.getLogger(PetHarvestCropSensor.class);
     // 最大半径
     private static final int MAX_RADIUS = 5;
     // 垂直范围
@@ -35,13 +30,7 @@ public class PetHarvestCropSensor extends Sensor<AbstractPet>{
             InitMemory.HARVEST_POS.get()
         );
      }
-     /**
-      * 这个函数用于初始化传感器
-      */
-     public PetHarvestCropSensor(){
-        //60tick检测一次
-        super(60);
-     }
+
     @Override
     protected void doTick(ServerLevel level, AbstractPet entity) {
         //只有当处于工作状态，并且职业为农民，并且Action为0，才进行检测

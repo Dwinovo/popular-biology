@@ -8,17 +8,12 @@ import com.dwinovo.popularbiology.init.InitTag;
 import com.dwinovo.popularbiology.utils.BlockSearch;
 import com.dwinovo.popularbiology.utils.Utils;
 import com.google.common.collect.ImmutableSet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.util.Set;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 // 这个类用于检测周围是否有可以传递的容器
 public class PetContainerSensor extends Sensor<AbstractPet> {
-    // 日志记录器
-    @SuppressWarnings("unused")
-    private static final Logger LOGGER = LoggerFactory.getLogger(PetContainerSensor.class);
     // 最大半径
     private static final int MAX_RADIUS = 5;
     // 垂直范围
@@ -32,13 +27,8 @@ public class PetContainerSensor extends Sensor<AbstractPet> {
             InitMemory.CONTAINER_POS.get()
         );
      }
-     /**
-      * 这个函数用于初始化传感器
-      */
-    public PetContainerSensor(){
-        //60tick检测一次
-        super(60);
-     }
+
+    
     /**
      * 具体的检测逻辑
      * @param level: 当前世界
@@ -68,6 +58,9 @@ public class PetContainerSensor extends Sensor<AbstractPet> {
                 //否则清除记忆
                 entity.getBrain().eraseMemory(InitMemory.CONTAINER_POS.get());
             });
+        } else if (entity.getBrain().getMemory(InitMemory.CONTAINER_POS.get()).isPresent()) {
+            // 背包没物品时清除记忆，避免卡在传递活动
+            entity.getBrain().eraseMemory(InitMemory.CONTAINER_POS.get());
         }
      }
 
