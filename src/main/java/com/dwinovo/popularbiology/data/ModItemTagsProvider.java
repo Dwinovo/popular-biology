@@ -4,6 +4,7 @@ import java.util.concurrent.CompletableFuture;
 
 import com.dwinovo.popularbiology.PopularBiology;
 import com.dwinovo.popularbiology.init.InitTag;
+import com.dwinovo.popularbiology.init.InitItems;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -25,9 +26,36 @@ public class ModItemTagsProvider extends ItemTagsProvider {
         tag(InitTag.ENTITY_FARMER_TOOLS)
                 .add(Items.WOODEN_HOE, Items.STONE_HOE, Items.IRON_HOE, Items.GOLDEN_HOE, Items.DIAMOND_HOE, Items.NETHERITE_HOE);
         tag(InitTag.ENTITY_FENCER_TOOLS)
-                .add(Items.WOODEN_SWORD, Items.STONE_SWORD, Items.IRON_SWORD, Items.GOLDEN_SWORD, Items.DIAMOND_SWORD, Items.NETHERITE_SWORD);
+                .add(Items.WOODEN_SWORD, Items.STONE_SWORD, Items.IRON_SWORD, Items.GOLDEN_SWORD, Items.DIAMOND_SWORD, Items.NETHERITE_SWORD)
+                .add(InitItems.USAGI_WEAPON.get())
+                .add(InitItems.HACHIWARE_WEAPON.get())
+                .add(InitItems.CHIIKAWA_WEAPON.get());
         tag(InitTag.ENTITY_ARCHER_TOOLS)
                 .add(Items.BOW);
+        tag(InitTag.ENTITY_TAME_FOODS)
+                .add(Items.APPLE)
+                .add(Items.BAKED_POTATO)
+                .add(Items.BREAD)
+                .add(Items.CARROT)
+                .add(Items.COOKED_BEEF)
+                .add(Items.COOKED_CHICKEN)
+                .add(Items.COOKED_COD)
+                .add(Items.COOKED_MUTTON)
+                .add(Items.COOKED_PORKCHOP)
+                .add(Items.COOKED_RABBIT)
+                .add(Items.COOKED_SALMON)
+                .add(Items.COOKIE)
+                .add(Items.GLOW_BERRIES)
+                .add(Items.GOLDEN_APPLE)
+                .add(Items.GOLDEN_CARROT)
+                .add(Items.HONEY_BOTTLE)
+                .add(Items.MELON_SLICE)
+                .add(Items.MUSHROOM_STEW)
+                .add(Items.PUMPKIN_PIE)
+                .add(Items.POTATO)
+                .add(Items.BEETROOT)
+                .add(Items.RABBIT_STEW)
+                .add(Items.SWEET_BERRIES);
         tag(InitTag.ENTITY_PLANT_CROPS)
             .add(Items.MELON_SEEDS)
             .add(Items.PUMPKIN_SEEDS)

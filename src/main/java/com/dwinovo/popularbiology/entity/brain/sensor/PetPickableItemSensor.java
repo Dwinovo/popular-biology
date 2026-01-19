@@ -12,7 +12,6 @@ import com.dwinovo.popularbiology.entity.PetMode;
 import com.dwinovo.popularbiology.utils.Utils;
 import net.minecraft.world.phys.AABB;
 import java.util.Comparator;
-import java.util.stream.Collectors;
 import net.minecraft.world.entity.item.ItemEntity;
 // 这个类检测周围是否有可以拾取的物品
 public class PetPickableItemSensor extends Sensor<AbstractPet>{

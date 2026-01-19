@@ -1,38 +1,32 @@
 package com.dwinovo.popularbiology.data;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import com.dwinovo.popularbiology.PopularBiology;
 import com.dwinovo.popularbiology.init.InitSounds;
 
 import net.minecraft.data.PackOutput;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.data.SoundDefinition;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.common.data.SoundDefinitionsProvider;
 
 public final class ModSoundDefinitionsProvider extends SoundDefinitionsProvider {
-    private static final Pattern VARIANT_SUFFIX = Pattern.compile("^(.*)_\\d+$");
-    private final Path soundsDir;
+    private static final int MAX_VARIANTS = 64;
+    private final ExistingFileHelper existingFileHelper;
 
     public ModSoundDefinitionsProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
         super(output, PopularBiology.MODID, existingFileHelper);
-        this.soundsDir = resolveSoundsDir(output);
+        this.existingFileHelper = existingFileHelper;
     }
 
     @Override
     public void registerSounds() {
-        Map<String, List<ResourceLocation>> variants = collectVariants();
+        Map<String, List<ResourceLocation>> variants = collectVariants(InitSounds.entries());
         for (InitSounds.SoundEntry entry : InitSounds.entries()) {
             List<ResourceLocation> sounds = variants.get(entry.path());
             if (sounds == null || sounds.isEmpty()) {
@@ -46,42 +40,32 @@ public final class ModSoundDefinitionsProvider extends SoundDefinitionsProvider 
         }
     }
 
-    private Map<String, List<ResourceLocation>> collectVariants() {
+    private Map<String, List<ResourceLocation>> collectVariants(List<InitSounds.SoundEntry> entries) {
         Map<String, List<ResourceLocation>> variants = new HashMap<>();
-        if (soundsDir == null || !Files.exists(soundsDir)) {
-            return variants;
+        for (InitSounds.SoundEntry entry : entries) {
+            List<ResourceLocation> sounds = findVariants(entry.path());
+            variants.put(entry.path(), sounds);
         }
-
-        try (Stream<Path> stream = Files.walk(soundsDir)) {
-            stream.filter(Files::isRegularFile)
-                    .filter(path -> path.getFileName().toString().endsWith(".ogg"))
-                    .map(path -> soundsDir.relativize(path).toString().replace('\\', '/'))
-                    .forEach(relativePath -> {
-                        String soundPath = relativePath.substring(0, relativePath.length() - ".ogg".length());
-                        Matcher matcher = VARIANT_SUFFIX.matcher(soundPath);
-                        if (!matcher.matches()) {
-                            return;
-                        }
-                        String basePath = matcher.group(1);
-                        variants.computeIfAbsent(basePath, ignored -> new ArrayList<>())
-                                .add(ResourceLocation.fromNamespaceAndPath(PopularBiology.MODID, soundPath));
-                    });
-        } catch (IOException e) {
-            // Ignore and generate no variants.
-        }
-
         return variants;
     }
 
-    private static Path resolveSoundsDir(PackOutput output) {
-        Path outputRoot = output.getOutputFolder();
-        Path projectRoot = outputRoot;
-        for (int i = 0; i < 3 && projectRoot != null; i++) {
-            projectRoot = projectRoot.getParent();
+    private List<ResourceLocation> findVariants(String basePath) {
+        List<ResourceLocation> sounds = new java.util.ArrayList<>();
+        for (int i = 1; i <= MAX_VARIANTS; i++) {
+            ResourceLocation candidate = ResourceLocation.fromNamespaceAndPath(PopularBiology.MODID, basePath + "_" + i);
+            if (!existingFileHelper.exists(candidate, PackType.CLIENT_RESOURCES, ".ogg", "sounds")) {
+                break;
+            }
+            sounds.add(candidate);
         }
-        if (projectRoot == null) {
-            return null;
+
+        if (sounds.isEmpty()) {
+            ResourceLocation direct = ResourceLocation.fromNamespaceAndPath(PopularBiology.MODID, basePath);
+            if (existingFileHelper.exists(direct, PackType.CLIENT_RESOURCES, ".ogg", "sounds")) {
+                sounds.add(direct);
+            }
         }
-        return projectRoot.resolve("src/main/resources/assets/" + PopularBiology.MODID + "/sounds");
+
+        return sounds;
     }
 }

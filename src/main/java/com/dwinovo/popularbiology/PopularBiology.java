@@ -35,6 +35,7 @@ public class PopularBiology {
         InitTabs.register(modEventBus);
 
         modEventBus.addListener(InitEntity::registerAttributes);
+        modEventBus.addListener(InitEntity::registerSpawnPlacements);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }

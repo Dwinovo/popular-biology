@@ -1,6 +1,9 @@
 package com.dwinovo.popularbiology.init;
 
 import com.dwinovo.popularbiology.PopularBiology;
+import com.dwinovo.popularbiology.item.ChiikawaWeapon;
+import com.dwinovo.popularbiology.item.HachiwareWeapon;
+import com.dwinovo.popularbiology.item.UsagiWeapon;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
@@ -34,6 +37,12 @@ public final class InitItems {
     public static final DeferredHolder<Item, DeferredSpawnEggItem> RAKKO_SPAWN_EGG =
             ITEMS.register("rakko_spawn_egg",
                     () -> new DeferredSpawnEggItem(InitEntity.RAKKO_PET, 0xeaffd0, 0xeaeaea, new Item.Properties()));
+    public static final DeferredHolder<Item, Item> USAGI_WEAPON =
+            ITEMS.register("usagi_weapon", UsagiWeapon::new);
+    public static final DeferredHolder<Item, Item> HACHIWARE_WEAPON =
+            ITEMS.register("hachiware_weapon", HachiwareWeapon::new);
+    public static final DeferredHolder<Item, Item> CHIIKAWA_WEAPON =
+            ITEMS.register("chiikawa_weapon", ChiikawaWeapon::new);
 
     private InitItems() {
     }

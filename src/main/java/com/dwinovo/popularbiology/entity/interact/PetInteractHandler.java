@@ -2,6 +2,7 @@ package com.dwinovo.popularbiology.entity.interact;
 
 import com.dwinovo.popularbiology.entity.AbstractPet;
 import com.dwinovo.popularbiology.entity.PetMode;
+import com.dwinovo.popularbiology.init.InitTag;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -28,7 +29,7 @@ public final class PetInteractHandler {
         boolean isOwner = pet.isOwnedBy(player);
         boolean isSneaking = player.isShiftKeyDown();
         ItemStack held = player.getItemInHand(hand);
-        boolean isFood = held.getItem().getFoodProperties(held, player) != null;
+        boolean isFood = held.is(InitTag.ENTITY_TAME_FOODS);
 
         if (!isTame && isFood) {
             return handleTame(level, pet, player, hand);
