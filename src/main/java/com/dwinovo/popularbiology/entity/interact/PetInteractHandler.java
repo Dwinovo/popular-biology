@@ -53,6 +53,7 @@ public final class PetInteractHandler {
             }
             if (level.getRandom().nextFloat() < TAME_CHANCE) {
                 pet.tame(player);
+                pet.playTameSound();
                 level.broadcastEntityEvent(pet, (byte) 7);
             }
             else {

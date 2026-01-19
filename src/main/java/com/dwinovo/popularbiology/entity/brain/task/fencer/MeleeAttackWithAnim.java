@@ -39,6 +39,7 @@ public final class MeleeAttackWithAnim {
                         pet.triggerAnim("main", "use_mainhand");
                         pet.swing(InteractionHand.MAIN_HAND);
                         pet.doHurtTarget(target);
+                        pet.playAttackSound();
                         cooldown.setWithExpiry(true, (long) cooldownBetweenAttacks);
                         return true;
                     }

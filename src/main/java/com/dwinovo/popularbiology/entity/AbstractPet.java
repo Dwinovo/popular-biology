@@ -45,6 +45,8 @@ import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.damagesource.DamageSource;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import com.dwinovo.popularbiology.sound.PetSoundSet;
@@ -207,6 +209,7 @@ public class AbstractPet extends TamableAnimal implements GeoEntity, RangedAttac
         if (!arrowItem.isInfinite(ammo, weapon, this)) {
             ammo.shrink(1);
         }
+        playAttackSound();
     }
 
 
@@ -318,6 +321,46 @@ public class AbstractPet extends TamableAnimal implements GeoEntity, RangedAttac
 
     protected PetSoundSet getSoundSet() {
         return PetSoundSet.EMPTY;
+    }
+
+    public void playAttackSound() {
+        if (!level().isClientSide) {
+            SoundEvent sound = getSoundSet().getAttackSound();
+            if (sound != null) {
+                playSound(sound, 1.0F, 1.0F);
+            }
+        }
+    }
+
+    public void playTameSound() {
+        if (!level().isClientSide) {
+            SoundEvent sound = getSoundSet().getTameSound();
+            if (sound != null) {
+                playSound(sound, 1.0F, 1.0F);
+            }
+        }
+    }
+
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return null;
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(DamageSource source) {
+        SoundEvent sound = getSoundSet().getHurtSound();
+        return sound != null ? sound : super.getHurtSound(source);
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        SoundEvent sound = getSoundSet().getDeathSound();
+        return sound != null ? sound : super.getDeathSound();
+    }
+
+    @Override
+    public float getVoicePitch() {
+        return 1.0F;
     }
     
 }

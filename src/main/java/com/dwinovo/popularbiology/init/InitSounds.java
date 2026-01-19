@@ -17,37 +17,25 @@ public final class InitSounds {
             DeferredRegister.create(BuiltInRegistries.SOUND_EVENT, PopularBiology.MODID);
     private static final List<SoundEntry> ENTRIES = new ArrayList<>();
 
-    public static final DeferredHolder<SoundEvent, SoundEvent> CHIIKAWA_YADAN = register("chiikawa/yadan");
-    public static final DeferredHolder<SoundEvent, SoundEvent> CHIIKAWA_YANGPAPA = register("chiikawa/yangpapa");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CHIIKAWA_INJURED = register("chiikawa/injured");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CHIIKAWA_TAME = register("chiikawa/tame");
 
-    public static final DeferredHolder<SoundEvent, SoundEvent> HACHIWARE_JIANJIANWAGANAI = register("hachiware/jianjianwaganai");
-    public static final DeferredHolder<SoundEvent, SoundEvent> HACHIWARE_NANINANI = register("hachiware/naninani");
-    public static final DeferredHolder<SoundEvent, SoundEvent> HACHIWARE_OI = register("hachiware/oi");
+    public static final DeferredHolder<SoundEvent, SoundEvent> HACHIWARE_INJURED = register("hachiware/injured");
+    public static final DeferredHolder<SoundEvent, SoundEvent> HACHIWARE_TAME = register("hachiware/tame");
 
-    public static final DeferredHolder<SoundEvent, SoundEvent> KURIMANJU_DEATH = register("kurimanju/lizimantou_death");
-    public static final DeferredHolder<SoundEvent, SoundEvent> KURIMANJU_HURT = register("kurimanju/lizimantou_gethurt");
-    public static final DeferredHolder<SoundEvent, SoundEvent> KURIMANJU_TAME = register("kurimanju/lizimantou_tame");
+    public static final DeferredHolder<SoundEvent, SoundEvent> KURIMANJU_TAME = register("kurimanju/tame");
 
-    public static final DeferredHolder<SoundEvent, SoundEvent> MOMONGA_AQIGE = register("momonga/aqige");
-    public static final DeferredHolder<SoundEvent, SoundEvent> MOMONGA_MIDIE = register("momonga/midie");
-    public static final DeferredHolder<SoundEvent, SoundEvent> MOMONGA_YIYA = register("momonga/yiya");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOMONGA_INJURED = register("momonga/injured");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOMONGA_TAME = register("momonga/tame");
 
-    public static final DeferredHolder<SoundEvent, SoundEvent> RAKKO_TAME = register("rakko/tame_sound");
+    public static final DeferredHolder<SoundEvent, SoundEvent> RAKKO_TAME = register("rakko/tame");
 
-    public static final DeferredHolder<SoundEvent, SoundEvent> SHISA_DEATH = register("shisa/shisa_death_sound");
-    public static final DeferredHolder<SoundEvent, SoundEvent> SHISA_HURT = register("shisa/shisa_gethurt_sound");
-    public static final DeferredHolder<SoundEvent, SoundEvent> SHISA_TAME = register("shisa/shisa_tame_sound");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SHISA_TAME = register("shisa/tame");
 
-    public static final DeferredHolder<SoundEvent, SoundEvent> USAGI_HA1 = register("usagi/ha1");
-    public static final DeferredHolder<SoundEvent, SoundEvent> USAGI_HA2 = register("usagi/ha2");
-    public static final DeferredHolder<SoundEvent, SoundEvent> USAGI_WAOOO = register("usagi/waooo");
-    public static final DeferredHolder<SoundEvent, SoundEvent> USAGI_WULA1 = register("usagi/wula1");
-    public static final DeferredHolder<SoundEvent, SoundEvent> USAGI_ATTACK = register("usagi/wusaqi_attack_sound");
-    public static final DeferredHolder<SoundEvent, SoundEvent> USAGI_BOOT_1 = register("usagi/wusaqi_boot_1");
-    public static final DeferredHolder<SoundEvent, SoundEvent> USAGI_BOOT_2 = register("usagi/wusaqi_boot_2");
-    public static final DeferredHolder<SoundEvent, SoundEvent> USAGI_BOOT_3 = register("usagi/wusaqi_boot_3");
-    public static final DeferredHolder<SoundEvent, SoundEvent> USAGI_BOOT_4 = register("usagi/wusaqi_boot_4");
-    public static final DeferredHolder<SoundEvent, SoundEvent> USAGI_HENG = register("usagi/wusaqi_heng");
+    public static final DeferredHolder<SoundEvent, SoundEvent> USAGI_AMBIENT = register("usagi/ambient");
+    public static final DeferredHolder<SoundEvent, SoundEvent> USAGI_ATTACK = register("usagi/attack");
+    public static final DeferredHolder<SoundEvent, SoundEvent> USAGI_INJURED = register("usagi/injured");
+    public static final DeferredHolder<SoundEvent, SoundEvent> USAGI_TAME = register("usagi/tame");
 
     private InitSounds() {
     }
