@@ -2,13 +2,13 @@ package com.dwinovo.popularbiology.entity.brain.handler;
 
 import com.dwinovo.popularbiology.entity.AbstractPet;
 import com.dwinovo.popularbiology.utils.BrainUtils;
+import com.dwinovo.popularbiology.entity.brain.task.fencer.MeleeAttackWithAnim;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Pair;
 
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.behavior.SetWalkTargetFromAttackTargetIfTargetOutOfReach;
-import net.minecraft.world.entity.ai.behavior.MeleeAttack;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.schedule.Activity;
@@ -47,7 +47,7 @@ public final class FencerJobHandler {
     private static void addFencerTasks(Brain<AbstractPet> brain) {
         // 添加攻击任务
         Pair<Integer, BehaviorControl<? super AbstractPet>> walkToAttackTarget = Pair.of(5, SetWalkTargetFromAttackTargetIfTargetOutOfReach.create(0.9F));
-        Pair<Integer, BehaviorControl<? super AbstractPet>> meleeAttack = Pair.of(4, MeleeAttack.create(20));
+        Pair<Integer, BehaviorControl<? super AbstractPet>> meleeAttack = Pair.of(4, MeleeAttackWithAnim.create(20));
         // 添加攻击任务
         brain.addActivity(Activity.WORK, ImmutableList.of(walkToAttackTarget, meleeAttack));
     }

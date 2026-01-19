@@ -262,7 +262,10 @@ public class AbstractPet extends TamableAnimal implements GeoEntity, RangedAttac
         AnimationController<AbstractPet> sub = new AnimationController<>(this, "sub", 1, state -> {
             return PlayState.STOP;
         });
+        sub.triggerableAnim("sword_attack", RawAnimation.begin().thenPlay("sword_attack"))
+            .triggerableAnim("use_mainhand", RawAnimation.begin().thenPlay("use_mainhand"));
 
+        main.triggerableAnim("use_mainhand", RawAnimation.begin().thenPlay("use_mainhand"));
         controllers.add(main, sub);
     }
 

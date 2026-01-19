@@ -106,6 +106,7 @@ public class HarvestCropBehavior extends Behavior<AbstractPet>{
             ItemStack tool = pet.getMainHandItem();
             // 检查作物是否成熟
             if (Utils.canHarvesr(world, cropPos)) {
+                pet.triggerAnim("main", "use_mainhand");
                 world.destroyBlock(cropPos, true, pet);
                 // 损坏工具
                 tool.hurtAndBreak(1, pet, EquipmentSlot.MAINHAND);

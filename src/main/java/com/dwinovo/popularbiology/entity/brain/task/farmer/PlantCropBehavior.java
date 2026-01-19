@@ -119,6 +119,7 @@ public class PlantCropBehavior extends Behavior<AbstractPet>{
         Optional<BlockState> cropState = getPlantBlockState(seed);
         // 再检测是否可以种植作物
         if (cropState.isPresent() && Utils.isCanPlantFarmland(world, farmlandPos)) {
+            pet.triggerAnim("main", "use_mainhand");
             // 在耕地上方1格种植作物
             world.setBlock(farmlandPos.above(), cropState.get(), 2);
             // 让宠物背包的种子减少
