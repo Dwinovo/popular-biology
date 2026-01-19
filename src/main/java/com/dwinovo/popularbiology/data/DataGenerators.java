@@ -24,6 +24,8 @@ public final class DataGenerators {
 
         event.getGenerator().addProvider(event.includeClient(),
                 new ModSoundDefinitionsProvider(output, existingFileHelper));
+        event.getGenerator().addProvider(event.includeClient(),
+                new ModItemModelProvider(output, existingFileHelper));
         event.getGenerator().addProvider(event.includeServer(),
                 new ModItemTagsProvider(output, lookupProvider, existingFileHelper));
         // 注册实体标签生成器
