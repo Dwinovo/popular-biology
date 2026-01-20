@@ -25,14 +25,7 @@ public class HurtRangedAttackTargetTask extends Behavior<AbstractPet>{
     }
     @Override
     protected boolean checkExtraStartConditions(ServerLevel pLevel, AbstractPet pet) {
-        /*
-         * 1.是WORK状态
-         * 2.是Archer职业
-         * 3.存在AttackTarget
-         * 4.AttackTarget活着
-         * 5.AttackTarget在10格以内
-         * 6.冷却是False
-         */
+        // Require work mode, archer job, valid target, and no cooldown.
         return pet.getPetMode() == PetMode.WORK 
         && pet.getPetJobId() == InitRegistry.ARCHER_ID
         && pet.getBrain().hasMemoryValue(MemoryModuleType.ATTACK_TARGET)

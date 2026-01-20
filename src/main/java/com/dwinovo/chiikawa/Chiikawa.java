@@ -15,7 +15,7 @@ import com.dwinovo.chiikawa.init.InitSounds;
 import com.dwinovo.chiikawa.init.InitItems;
 import com.dwinovo.chiikawa.init.InitTabs;
 
-// The value here should match an entry in the META-INF/neoforge.mods.toml file
+// Must match the mod id in META-INF/neoforge.mods.toml.
 @Mod(Chiikawa.MODID)
 public class Chiikawa {
     

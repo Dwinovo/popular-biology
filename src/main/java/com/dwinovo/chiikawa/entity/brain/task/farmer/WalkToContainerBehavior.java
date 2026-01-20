@@ -17,34 +17,31 @@ import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.core.Direction;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
-// 这个任务用于走到容器旁边
+// Walks to the delivery container.
 public class WalkToContainerBehavior extends Behavior<AbstractPet>{
-    // 需要检测的记忆类型
+    // Required memories.
     private static final Map<MemoryModuleType<?>, MemoryStatus> REQUIRED_MEMORIES = ImmutableMap.of(
         InitMemory.CONTAINER_POS.get(), MemoryStatus.VALUE_PRESENT
     );
-    // 速度
+    // Move speed.
     private final float speed;
     /**
-     * 这个函数用于初始化任务
-     * @param speed: 速度
+     * Creates the task.
+     * @param speed move speed
      */
     public WalkToContainerBehavior(float speed) {
-        // 初始化任务，超时时间15
         super(REQUIRED_MEMORIES, 15);
-        // 设置速度
         this.speed = speed;
     }
     /**
-     * 这个函数用于检查是否可以开始任务
-     * @param world: 当前世界
-     * @param pet: 当前生物
-     * @return: 是否可以开始任务
+     * Checks whether the task can start.
+     * @param world the server level
+     * @param pet the pet entity
+     * @return whether the task can start
      */
     @SuppressWarnings("null")
     @Override
     protected boolean checkExtraStartConditions(ServerLevel world, AbstractPet pet) {
-        // HarvestPos和PlantPos不存在，处于工作模式，并且背包里面符合Tag
         if (pet.getPetMode() != PetMode.WORK || pet.getPetJobId() != InitRegistry.FARMER_ID) {
             return false;
         }
@@ -70,10 +67,10 @@ public class WalkToContainerBehavior extends Behavior<AbstractPet>{
         return true;
     }
     /**
-     * 这个函数用于开始任务
-     * @param world: 当前世界
-     * @param pet: 当前生物
-     * @param time: 当前时间
+     * Start walking toward the container.
+     * @param world the server level
+     * @param pet the pet entity
+     * @param time the current time
      */
     @SuppressWarnings("null")
     @Override

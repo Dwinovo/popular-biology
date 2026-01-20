@@ -26,33 +26,31 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 
-// 这个任务用于将作物传输到容器中
+// Delivers tagged items to a nearby container.
 public class DeliverCropBehavior extends Behavior<AbstractPet> {
     private boolean didOpen;
     private BlockPos openContainerPos;
-    // 需要记忆的模块
+    // Required memories.
     private static final Map<MemoryModuleType<?>, MemoryStatus> REQUIRED_MEMORIES = ImmutableMap.of(
         InitMemory.CONTAINER_POS.get(), MemoryStatus.VALUE_PRESENT
     );
 
     /**
-     * 这个构造函数用于初始化任务
+     * Task with a long timeout for delivery.
      */
     public DeliverCropBehavior() {
-        // 超时时间3000tick
         super(REQUIRED_MEMORIES, 3000);
     }
 
     /**
-     * 这个函数用于检查是否可以开始任务
-     * @param world: 世界
-     * @param pet: 生物
-     * @return: 是否可以开始任务
+     * Checks whether delivery can start.
+     * @param world the server level
+     * @param pet the pet entity
+     * @return whether the task can start
      */
     @SuppressWarnings("null")
     @Override
     protected boolean checkExtraStartConditions(ServerLevel world, AbstractPet pet) {
-        // 只有当处于工作状态，职业为农民，背包里面有符合InitTag的物品，没有Harvest或Plant任务，Container位置存在，才进行任务
         if (pet.getPetMode() != PetMode.WORK || pet.getPetJobId() != InitRegistry.FARMER_ID) {
             return false;
         }
@@ -78,17 +76,16 @@ public class DeliverCropBehavior extends Behavior<AbstractPet> {
     }
 
     /**
-     * 这个函数用于开始任务
-     * @param world: 世界
-     * @param pet: 生物
-     * @param time: 时间
+     * Starts the delivery and opens the container if needed.
+     * @param world the server level
+     * @param pet the pet entity
+     * @param time the current time
      */
     @SuppressWarnings("null")
     @Override
     protected void start(ServerLevel world, AbstractPet pet, long time) {
         try {
             this.didOpen = true;
-            // 获取容器位置并触发箱子打开
             Optional<BlockPos> containerPosOpt = pet.getBrain().getMemory(InitMemory.CONTAINER_POS.get());
             if (containerPosOpt.isPresent()) {
                 BlockPos containerPos = containerPosOpt.get();
@@ -109,11 +106,11 @@ public class DeliverCropBehavior extends Behavior<AbstractPet> {
     }
 
     /**
-     * 这个函数用于检查是否可以继续使用任务
-     * @param world: 世界
-     * @param pet: 生物
-     * @param time: 时间
-     * @return: 是否可以继续使用任务
+     * Checks whether delivery should continue.
+     * @param world the server level
+     * @param pet the pet entity
+     * @param time the current time
+     * @return whether the task can continue
      */
     @SuppressWarnings("null")
     @Override
@@ -141,17 +138,15 @@ public class DeliverCropBehavior extends Behavior<AbstractPet> {
     }
 
     /**
-     * 这个函数用于每tick执行的任务
-     * @param world: 世界
-     * @param pet: 生物
-     * @param time: 时间
+     * Per-tick delivery work.
+     * @param world the server level
+     * @param pet the pet entity
+     * @param time the current time
      */
     @SuppressWarnings("null")
     @Override
     protected void tick(ServerLevel world, AbstractPet pet, long time) {
-        // 停止导航
         pet.getNavigation().stop();
-        // 获得容器位置
         Optional<BlockPos> containerPosOpt = pet.getBrain().getMemory(InitMemory.CONTAINER_POS.get());
         if (containerPosOpt.isEmpty()) {
             return;
@@ -200,19 +195,16 @@ public class DeliverCropBehavior extends Behavior<AbstractPet> {
     }
 
     /**
-     * 这个函数用于停止任务的时候调用
-     * @param world: 世界
-     * @param pet: 生物
-     * @param time: 时间
+     * Cleanup when the task stops.
+     * @param world the server level
+     * @param pet the pet entity
+     * @param time the current time
      */
     @SuppressWarnings("null")
     @Override
     protected void stop(ServerLevel world, AbstractPet pet, long time) {
-        // 调用父类方法
         super.stop(world, pet, time);
-        // 安全获取容器位置 
         Optional<BlockPos> containerPosOpt = pet.getBrain().getMemory(InitMemory.CONTAINER_POS.get());
-        // 如果容器位置不为空
         if (this.didOpen) {
             BlockPos containerPos = this.openContainerPos;
             if (containerPos == null && containerPosOpt.isPresent()) {

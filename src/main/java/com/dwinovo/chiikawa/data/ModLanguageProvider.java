@@ -20,14 +20,6 @@ public final class ModLanguageProvider extends LanguageProvider {
         if ("zh_cn".equals(locale)) {
             addCommonTranslations("Chiikawa", "背包", "跟随", "坐下", "工作");
             addJobTranslations("职业", "无", "农夫", "剑士", "弓箭手", "未知");
-            addConfigTranslations(
-                    "Chiikawa 配置",
-                    "Chiikawa 配置",
-                    "Chiikawa 配置",
-                    "物品列表",
-                    "记录泥土方块",
-                    "魔法数字文本",
-                    "魔法数字");
             addEntityTranslations("乌萨奇", "小八", "吉伊", "狮萨", "飞鼠", "栗子馒头", "獭师父");
             addItemTranslations(
                     "乌萨奇刷怪蛋",
@@ -43,14 +35,6 @@ public final class ModLanguageProvider extends LanguageProvider {
         } else {
             addCommonTranslations("Chiikawa", "Pet Backpack", "Follow", "Sit", "Work");
             addJobTranslations("Job", "None", "Farmer", "Fencer", "Archer", "Unknown");
-            addConfigTranslations(
-                    "Chiikawa Configs",
-                    "Chiikawa Configs",
-                    "Chiikawa Configs",
-                    "Item List",
-                    "Log Dirt Block",
-                    "Magic Number Text",
-                    "Magic Number");
             addEntityTranslations("Usagi", "Hachiware", "Chiikawa", "Shisa", "Momonga", "Kurimanju", "Rakko");
             addItemTranslations(
                     "Usagi Spawn Egg",
@@ -82,17 +66,6 @@ public final class ModLanguageProvider extends LanguageProvider {
         add("tooltip.chiikawa.pet_job.archer", archer);
         add("tooltip.chiikawa.pet_job.unknown", unknown);
         add("config.jade.plugin_chiikawa.pet_job", jobLabel);
-    }
-
-    private void addConfigTranslations(String title, String section, String sectionTitle, String items,
-            String logDirt, String magicIntro, String magicNumber) {
-        add("chiikawa.configuration.title", title);
-        add("chiikawa.configuration.section.chiikawa.common.toml", section);
-        add("chiikawa.configuration.section.chiikawa.common.toml.title", sectionTitle);
-        add("chiikawa.configuration.items", items);
-        add("chiikawa.configuration.logDirtBlock", logDirt);
-        add("chiikawa.configuration.magicNumberIntroduction", magicIntro);
-        add("chiikawa.configuration.magicNumber", magicNumber);
     }
 
     private void addEntityTranslations(String usagi, String hachiware, String chiikawa,

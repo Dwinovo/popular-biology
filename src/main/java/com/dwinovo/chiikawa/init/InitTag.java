@@ -20,7 +20,7 @@ public final class InitTag {
 
     public static final TagKey<EntityType<?>> ENTITY_HOSTILE_ENTITY = tagEntity("entity_hostile_entity");
 
-    // entity_harvest_crops文件用于定义宠物可以收获的作物
+    // Blocks pets can harvest, defined by the entity_harvest_crops tag file.
     public static final TagKey<Block> ENTITY_HARVEST_CROPS = tagBlock("entity_harvest_crops");
     
 

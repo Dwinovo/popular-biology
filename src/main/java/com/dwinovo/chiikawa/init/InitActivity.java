@@ -12,20 +12,20 @@ public final class InitActivity {
     public static final DeferredRegister<Activity> ACTIVITY_TYPES =
         DeferredRegister.create(Registries.ACTIVITY, Chiikawa.MODID);
 
-    //注册FARM_HARVEST活动
+    // Farmer harvest activity.
     public static final DeferredHolder<Activity, Activity> FARMER_HARVEST =
         ACTIVITY_TYPES.register("farmer_harvest", () -> new Activity("farmer_harvest"));
-    //注册FARM_PLANT活动
+    // Farmer plant activity.
     public static final DeferredHolder<Activity, Activity> FARMER_PLANT =
         ACTIVITY_TYPES.register("farmer_plant", () -> new Activity("farmer_plant"));
-    //注册DELEVER活动
+    // Deliver activity.
     public static final DeferredHolder<Activity, Activity> DELEVER =
         ACTIVITY_TYPES.register("delever", () -> new Activity("delever"));
 
     private InitActivity() {
     }
 
-    //注册Activity
+    // Register activities.
     public static void register(IEventBus eventBus) {
         ACTIVITY_TYPES.register(eventBus);
     }

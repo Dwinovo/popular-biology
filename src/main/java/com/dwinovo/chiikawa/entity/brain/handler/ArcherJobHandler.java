@@ -22,9 +22,9 @@ public final class ArcherJobHandler {
         BrainUtils.addIdleTasks(brain);
 
         addFencerTasks(brain);
-        // 设置核心活动
+        // Core activities.
         brain.setCoreActivities(ImmutableSet.of(Activity.CORE));
-        // 设置默认活动
+        // Default activity.
         brain.setDefaultActivity(Activity.IDLE);
     }
 
@@ -36,16 +36,16 @@ public final class ArcherJobHandler {
             return;
         }
         ImmutableList.Builder<Activity> activities = ImmutableList.builder();
-        // 执行WORK必须要有AttackTarget并且有箭并且没有冷却
+        // WORK requires a target, ammo, and no cooldown.
         if (brain.hasMemoryValue(MemoryModuleType.ATTACK_TARGET)
         && !Utils.getArrow(pet).isEmpty()
         && !brain.hasMemoryValue(MemoryModuleType.ATTACK_COOLING_DOWN))
         {
             activities.add(Activity.WORK);
         }
-        //2.IDLE
+        // Always allow idle.
         activities.add(Activity.IDLE);
-        //实时更新优先级高的活动
+        // Pick the highest valid activity.
         brain.setActiveActivityToFirstValid(activities.build());
         
     }

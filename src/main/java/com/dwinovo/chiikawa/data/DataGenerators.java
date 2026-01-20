@@ -37,7 +37,7 @@ public final class DataGenerators {
                 new ModLanguageProvider(output, "zh_cn"));
         event.getGenerator().addProvider(event.includeServer(),
                 new ModItemTagsProvider(output, lookupProvider, existingFileHelper));
-        // 注册实体标签生成器
+        // Entity tags.
         event.getGenerator().addProvider(event.includeServer(), 
             new ModEntityTagsProvider(
                 output,
@@ -45,6 +45,7 @@ public final class DataGenerators {
                 existingFileHelper
             )
         );
+        // Block tags.
         event.getGenerator().addProvider(event.includeServer(), 
             new ModBlockTagsProvider(
                 output,

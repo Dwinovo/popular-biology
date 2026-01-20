@@ -17,7 +17,7 @@ import net.minecraft.world.phys.AABB;
 
 public class PetAttackbleEntitySensor extends Sensor<AbstractPet> {
     public PetAttackbleEntitySensor() {
-        // 60 tick 检测一次
+        // Scan every 60 ticks.
         super(60);
     }
 
@@ -31,13 +31,7 @@ public class PetAttackbleEntitySensor extends Sensor<AbstractPet> {
 
     @Override
     protected void doTick(ServerLevel level, AbstractPet pet) {
-        /*
-         * 1.是否是WORK状态
-         * 2.是否是Fencer或者Archer职业
-         * 3.是否存在攻击目标
-         * 4.当前的攻击目标是否超过15格
-         * 5.当前的攻击目标是否符合InitTag
-         */
+        // Only work mode fencers/archers track valid targets within range.
         if (pet.getPetMode() != PetMode.WORK) {
             pet.getBrain().eraseMemory(MemoryModuleType.ATTACK_TARGET);
             return;

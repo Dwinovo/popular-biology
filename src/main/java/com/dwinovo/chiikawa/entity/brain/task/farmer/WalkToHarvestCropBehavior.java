@@ -17,33 +17,30 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import java.util.Map;
-// 这个任务用于走到作物旁边
+// Walks to a harvestable crop.
 public class WalkToHarvestCropBehavior extends Behavior<AbstractPet>{
-    // 需要检测的记忆类型
+    // Required memories.
     private static final Map<MemoryModuleType<?>, MemoryStatus> REQUIRED_MEMORIES = ImmutableMap.of(
         InitMemory.HARVEST_POS.get(), MemoryStatus.VALUE_PRESENT
     );
-    // 速度
+    // Move speed.
     private final float speed;
     /**
-     * 这个函数用于初始化任务
-     * @param speed: 速度
+     * Creates the task.
+     * @param speed move speed
      */
     public WalkToHarvestCropBehavior(float speed) {
-        // 初始化任务，超时时间15tick
         super(REQUIRED_MEMORIES, 15);
-        // 设置速度
         this.speed = speed;
     }
     /**
-     * 这个函数用于检查是否可以开始任务
-     * @param world: 当前世界
-     * @param pet: 当前生物
-     * @return: 是否可以开始任务
+     * Checks whether the task can start.
+     * @param world the server level
+     * @param pet the pet entity
+     * @return whether the task can start
      */
     @Override
     protected boolean checkExtraStartConditions(ServerLevel world, AbstractPet pet) {
-        // 处于工作模式，职业为农民，HarvestPos不为空
         if (pet.getPetMode() == PetMode.WORK && pet.getPetJobId() == InitRegistry.FARMER_ID 
             && pet.getBrain().getMemory(InitMemory.HARVEST_POS.get()).isPresent()
         ){
@@ -53,14 +50,13 @@ public class WalkToHarvestCropBehavior extends Behavior<AbstractPet>{
             }
             pet.getBrain().eraseMemory(InitMemory.HARVEST_POS.get());
         }
-        // 否则不可以开始任务
         return false;
     }
     /**
-     * 这个函数用于开始任务
-     * @param world: 当前世界
-     * @param pet: 当前生物
-     * @param time: 当前时间
+     * Start walking to the target.
+     * @param world the server level
+     * @param pet the pet entity
+     * @param time the current time
      */
     @Override
     protected void start(ServerLevel world, AbstractPet pet, long time) {

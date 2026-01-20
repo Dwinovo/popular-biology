@@ -18,18 +18,18 @@ import net.minecraft.world.entity.ai.memory.WalkTarget;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
-// 这个任务用于保持主人或家附近
+// Keeps the pet near its owner or home.
 public class KeepAroundBehavior<E extends AbstractPet> extends Behavior<E> {
     private static final Map<MemoryModuleType<?>, MemoryStatus> REQUIRED_MEMORIES = ImmutableMap.of(
         MemoryModuleType.WALK_TARGET, MemoryStatus.REGISTERED,
         MemoryModuleType.HOME, MemoryStatus.REGISTERED
     );
 
-    // 触发跟随主人的距离
+    // Distance to start following the owner.
     private final float followMasterDistance;
-    // 触发保持家附近的距离
+    // Distance to start returning to home.
     private final float keepHomeAroundDistance;
-    // 触发传送的距离
+    // Distance to trigger teleport.
     private final float teleportDistance;
 
     public KeepAroundBehavior(float followMasterDistance, float keepHomeAroundDistance, float teleportDistance) {

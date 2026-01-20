@@ -152,10 +152,10 @@ public class AbstractPet extends TamableAnimal implements GeoEntity, RangedAttac
     private void refreshBrain(ServerLevel serverLevelIn) {
         Brain<AbstractPet> brain = this.getBrain();
         brain.stopAll(serverLevelIn, this);
-        //复制Brain
+        // Copy the brain without behaviors.
         Brain<AbstractPet> newBrain = brain.copyWithoutBehaviors();
         this.brain = newBrain;
-        //初始化新AI行为
+        // Initialize job behaviors.
         InitRegistry.getJobFromId(getPetJobId()).initBrain(this, newBrain);
     }
 
@@ -234,12 +234,12 @@ public class AbstractPet extends TamableAnimal implements GeoEntity, RangedAttac
     
     @Override
     public boolean canMate(Animal other) {
-        return false; // 禁止繁殖
+        return false; // Disable breeding.
     }
 
     @Override
     public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob partner) {
-        return null; // 保险：不会生成幼体
+        return null; // Safety: no offspring.
     }
 
     @Override

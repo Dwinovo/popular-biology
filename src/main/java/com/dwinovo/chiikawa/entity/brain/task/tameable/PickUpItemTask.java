@@ -16,35 +16,32 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.minecraft.world.item.ItemStack;
-// 这个任务用于拾取物品
+// Picks up nearby items.
 public class PickUpItemTask extends Behavior<AbstractPet> {
-    // 速度
+    // Move speed.
     private final float speedModifier;
     private static final double PICKUP_DISTANCE_SQ = 2.25D;
-    // 需要检测的记忆类型
+    // Required memories.
     private static final Map<MemoryModuleType<?>, MemoryStatus> REQUIRED_MEMORIES = ImmutableMap.of(
         InitMemory.PICKABLE_ITEM.get(), MemoryStatus.VALUE_PRESENT
     );
     /**
-     * 这个函数用于初始化任务
-     * @param speedModifier: 速度
+     * Creates the task.
+     * @param speedModifier move speed
      */
     public PickUpItemTask(float speedModifier) {
-        // 初始化任务
         super(REQUIRED_MEMORIES, 10);
-        // 设置速度
         this.speedModifier = speedModifier;
     }
     /**
-     * 这个函数用于检查是否可以开始任务
-     * @param level: 当前世界
-     * @param entity: 当前生物
-     * @return: 是否可以开始任务
+     * Checks whether the task can start.
+     * @param level the server level
+     * @param entity the pet entity
+     * @return whether the task can start
      */
     @SuppressWarnings("null")
     @Override
     protected boolean checkExtraStartConditions(ServerLevel level, AbstractPet entity) {
-        // 如果生物被驯化并且处于工作状态，则可以开始任务
         return entity.isTame() && entity.getPetMode() == PetMode.WORK;
     }
 
@@ -55,24 +52,19 @@ public class PickUpItemTask extends Behavior<AbstractPet> {
             && entity.getBrain().getMemory(InitMemory.PICKABLE_ITEM.get()).isPresent();
     }
     /**
-     * 这个函数用于开始任务
-     * @param level: 当前世界
-     * @param entity: 当前生物
-     * @param time: 当前时间
+     * Start behavior.
+     * @param level the server level
+     * @param entity the pet entity
+     * @param time the current time
      */
     @SuppressWarnings("null")
     @Override
     protected void start(ServerLevel level, AbstractPet entity, long time) {
-        //获取可拾取物品列表
         ItemEntity target = entity.getBrain().getMemory(InitMemory.PICKABLE_ITEM.get()).orElse(null);
-        //如果不为空
         if (target != null) {
-            //设置目标位置
             BehaviorUtils.setWalkAndLookTargetMemories(entity, target, speedModifier, 0);
         }
-        //如果为空，则清除LookTarget
         else{
-            //清除LookTarget
             entity.getBrain().eraseMemory(MemoryModuleType.LOOK_TARGET);
         }        
     }

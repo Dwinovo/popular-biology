@@ -15,7 +15,7 @@ public final class NoneJobHandler {
         BrainUtils.addCoreTasks(brain);
         BrainUtils.addIdleTasks(brain);
         brain.setCoreActivities(ImmutableSet.of(Activity.CORE));
-        // 设置默认活动
+        // Default activity.
         brain.setDefaultActivity(Activity.IDLE);
     }
 

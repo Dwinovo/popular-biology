@@ -23,11 +23,11 @@ public final class FarmerJobHandler {
     public static void initBrain(AbstractPet pet, Brain<AbstractPet> brain) {
         BrainUtils.addCoreTasks(brain);
         BrainUtils.addIdleTasks(brain);
-        // 添加收获任务
+        // Harvest activity tasks.
         addFarmHarvestActivity(brain);
-        // 添加种植任务
+        // Plant activity tasks.
         addFarmPlantActivity(brain);
-        // 添加传递任务
+        // Deliver activity tasks.
         addDeliverActivity(brain,pet);
 
         brain.setCoreActivities(ImmutableSet.of(Activity.CORE));
@@ -46,28 +46,21 @@ public final class FarmerJobHandler {
             return;
         }
         ImmutableList.Builder<Activity> activities = ImmutableList.builder();   
-        //优先级：
-        //1.FARM_HARVEST
-        //必须HarvestPos存在时
+        // Priority: harvest > plant > deliver > idle.
         if (brain.hasMemoryValue(InitMemory.HARVEST_POS.get()))
         {
             activities.add(InitActivity.FARMER_HARVEST.get());
         }
-        //2.FARM_PLANT
-        //必须PlantPos存在时
         if (brain.hasMemoryValue(InitMemory.PLANT_POS.get()))
         {
             activities.add(InitActivity.FARMER_PLANT.get());
         }
-        //3.DELEVER
-        //必须ContainerPos存在时
         if (brain.hasMemoryValue(InitMemory.CONTAINER_POS.get()))
         {
             activities.add(InitActivity.DELEVER.get());
         }
-        //4.IDLE
         activities.add(Activity.IDLE);
-        //实时更新优先级高的活动
+        // Pick the highest valid activity.
         brain.setActiveActivityToFirstValid(activities.build());
     }
 
@@ -85,29 +78,20 @@ public final class FarmerJobHandler {
     }
     
     private static void addFarmHarvestActivity(Brain<AbstractPet> brain) {
-        // 添加收获任务
         brain.addActivity(InitActivity.FARMER_HARVEST.get(), ImmutableList.of(
-            // 收获任务
             Pair.of(3, new HarvestCropBehavior()),
-            // 移动到收获任务
             Pair.of(4, new WalkToHarvestCropBehavior(0.8F))
         ));
     }
     private static void addFarmPlantActivity(Brain<AbstractPet> brain) {
-        // 添加种植任务
         brain.addActivity(InitActivity.FARMER_PLANT.get(), ImmutableList.of(
-            // 种植任务
             Pair.of(3, new PlantCropBehavior()),
-            // 移动到种植任务
             Pair.of(4, new WalkToPlantCropBehavior(0.8F))
         ));
     }
     private static void addDeliverActivity(Brain<AbstractPet> brain,AbstractPet pet) {
-        // 添加传递任务
         brain.addActivity(InitActivity.DELEVER.get(), ImmutableList.of(
-            // 传递任务
             Pair.of(3, new DeliverCropBehavior()),
-            // 移动到传递任务
             Pair.of(4, new WalkToContainerBehavior(0.8F))
         ));
     }

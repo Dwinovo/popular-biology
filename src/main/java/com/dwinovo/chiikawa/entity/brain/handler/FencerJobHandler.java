@@ -32,23 +32,19 @@ public final class FencerJobHandler {
 
     private static void updateActivity(Brain<AbstractPet> brain) {
         ImmutableList.Builder<Activity> activities = ImmutableList.builder();
-        // 优先级：
-        // 1. WORK
-        // 必须AttackTarget存在时，并且没有冷却
+        // Priority: work when a target exists and no cooldown.
         if (brain.getMemory(MemoryModuleType.ATTACK_TARGET).isPresent()
             && !brain.getMemory(MemoryModuleType.ATTACK_COOLING_DOWN).isPresent()) {
             activities.add(Activity.WORK);
         }
-        // 2. IDLE
         activities.add(Activity.IDLE);
-        // 实时更新优先级高的活动
+        // Pick the highest valid activity.
         brain.setActiveActivityToFirstValid(activities.build());
     }
     private static void addFencerTasks(Brain<AbstractPet> brain) {
-        // 添加攻击任务
+        // Attack behaviors.
         Pair<Integer, BehaviorControl<? super AbstractPet>> walkToAttackTarget = Pair.of(5, SetWalkTargetFromAttackTargetIfTargetOutOfReach.create(0.9F));
         Pair<Integer, BehaviorControl<? super AbstractPet>> meleeAttack = Pair.of(4, MeleeAttackWithAnim.create(20));
-        // 添加攻击任务
         brain.addActivity(Activity.WORK, ImmutableList.of(walkToAttackTarget, meleeAttack));
     }
 }

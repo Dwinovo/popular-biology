@@ -21,21 +21,17 @@ import com.dwinovo.chiikawa.client.screen.PetBackpackScreen;
 import com.dwinovo.chiikawa.init.InitEntity;
 import com.dwinovo.chiikawa.init.InitMenu;
 
-// This class will not load on dedicated servers. Accessing client side code from here is safe.
+// Client-only mod entry.
 @Mod(value = Chiikawa.MODID, dist = Dist.CLIENT)
-// You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
+// Auto-register @SubscribeEvent methods.
 @EventBusSubscriber(modid = Chiikawa.MODID, value = Dist.CLIENT)
 public class ChiikawaClient {
     public ChiikawaClient(ModContainer container) {
-        // Allows NeoForge to create a config screen for this mod's configs.
-        // The config screen is accessed by going to the Mods screen > clicking on your mod > clicking on config.
-        // Do not forget to add translations for your config options to the en_us.json file.
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
     }
 
     @SubscribeEvent
     static void onClientSetup(FMLClientSetupEvent event) {
-        // Some client setup code
         event.enqueueWork(() -> {
             EntityRenderers.register(InitEntity.USAGI_PET.get(), UsagiRender::new);
             EntityRenderers.register(InitEntity.HACHIWARE_PET.get(), HachiwareRender::new);

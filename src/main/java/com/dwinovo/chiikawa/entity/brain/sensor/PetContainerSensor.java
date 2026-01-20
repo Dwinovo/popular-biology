@@ -15,15 +15,15 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.Sensor;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
-// 这个类用于检测周围是否有可以传递的容器
+// Finds nearby containers that can accept delivery items.
 public class PetContainerSensor extends Sensor<AbstractPet> {
-    // 最大半径
+    // Search radius.
     private static final int MAX_RADIUS = 5;
-    // 垂直范围
+    // Vertical search range.
     private static final int VERTICAL_RANGE = 1;
     /**
-     * 这个函数用于获取需要检测的记忆类型
-     * @return: 需要检测的记忆类型
+     * Memory types used by this sensor.
+     * @return required memory types
      */
     public Set<MemoryModuleType<?>> requires() {
         return ImmutableSet.of(
@@ -33,13 +33,12 @@ public class PetContainerSensor extends Sensor<AbstractPet> {
 
     
     /**
-     * 具体的检测逻辑
-     * @param level: 当前世界
-     * @param entity: 当前生物
+     * Scan for reachable delivery containers.
+     * @param level the server level
+     * @param entity the pet entity
      */
     @Override
      protected void doTick(ServerLevel level, AbstractPet entity) {
-         //只有当处于工作状态，并且职业为农民，才进行检测
          boolean hasDeliverItem = hasTaggedItem(entity.getBackpack());
          if (entity.getPetMode() != PetMode.WORK || entity.getPetJobId() != InitRegistry.FARMER_ID || !hasDeliverItem) {
             entity.getBrain().eraseMemory(InitMemory.CONTAINER_POS.get());
@@ -60,23 +59,16 @@ public class PetContainerSensor extends Sensor<AbstractPet> {
             entity.getBrain().eraseMemory(InitMemory.CONTAINER_POS.get());
          }
          if (entity.getPetMode() == PetMode.WORK && entity.getPetJobId() == InitRegistry.FARMER_ID && hasDeliverItem) {
-            // 螺旋式检测周围是否有可以传递的容器，要求符合InitTag.ENTITY_DELEVER_CONTAINER标签，并且背包里面有可以传递的物品
+            // Spiral search for reachable containers with free space.
             BlockSearch.spiralBlockSearch(level, entity, MAX_RADIUS, VERTICAL_RANGE,
             (lvl, pos, pet) -> 
-                //pos位置必须可以到达
                 Utils.canReach(pet, pos)
-                //pos位置的方块必须是InitTag里面的
                 && lvl.getBlockState(pos).is(InitTag.ENTITY_DELEVER_CONTAINER)
-                //背包里面有可以传递的物品
                 && hasDeliverItem
-                // 检查容器是否有空余空间
                 && canInsertContainer(lvl, pos, pet)
-                //如果符合条件，则返回pos位置
             ).ifPresentOrElse(foundPos -> {
-                //设置记忆
                 entity.getBrain().setMemory(InitMemory.CONTAINER_POS.get(), foundPos);
             }, () -> {
-                //否则清除记忆
                 entity.getBrain().eraseMemory(InitMemory.CONTAINER_POS.get());
             });
         }

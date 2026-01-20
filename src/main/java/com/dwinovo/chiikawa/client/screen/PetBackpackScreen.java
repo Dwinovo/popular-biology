@@ -23,9 +23,9 @@ public class PetBackpackScreen extends AbstractContainerScreen<PetBackpackMenu> 
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
-        //渲染背景
+        // Draw background.
         graphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
-        //渲染实体
+        // Draw pet preview.
         LivingEntity pet = this.menu.getPet(Minecraft.getInstance().level);
         if (pet != null) {
             int centerX = this.leftPos + 51;
