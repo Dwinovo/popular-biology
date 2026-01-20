@@ -36,8 +36,8 @@ import com.dwinovo.chiikawa.utils.Utils;
 
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.animatable.processing.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
@@ -244,7 +244,7 @@ public class AbstractPet extends TamableAnimal implements GeoEntity, RangedAttac
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        AnimationController<AbstractPet> main = new AnimationController<>(this, "main", 5, state -> {
+        AnimationController<AbstractPet> main = new AnimationController<>("main", 5, state -> {
             RawAnimation builder = RawAnimation.begin();
             if (this.getPetMode() == PetMode.SIT)
             {
@@ -260,7 +260,7 @@ public class AbstractPet extends TamableAnimal implements GeoEntity, RangedAttac
             return PlayState.CONTINUE;
         });
 
-        AnimationController<AbstractPet> sub = new AnimationController<>(this, "sub", 1, state -> {
+        AnimationController<AbstractPet> sub = new AnimationController<>("sub", 1, state -> {
             return PlayState.STOP;
         });
 
@@ -297,15 +297,10 @@ public class AbstractPet extends TamableAnimal implements GeoEntity, RangedAttac
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        if (tag.contains("Backpack")) {
-            ContainerHelper.loadAllItems(tag.getCompound("Backpack"), backpack.getItems(), level().registryAccess());
-        }
-        if (tag.contains("PetJob")) {
-            setPetJobId(tag.getInt("PetJob"));
-        }
-        if (tag.contains("PetMode")) {
-            this.entityData.set(PET_MODE, tag.getByte("PetMode"));
-        }
+        tag.getCompound("Backpack").ifPresent(backpackTag ->
+            ContainerHelper.loadAllItems(backpackTag, backpack.getItems(), level().registryAccess()));
+        tag.getInt("PetJob").ifPresent(this::setPetJobId);
+        tag.getByte("PetMode").ifPresent(value -> this.entityData.set(PET_MODE, value));
         refreshJobFromMainhand(true);
     }
 

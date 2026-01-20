@@ -1,46 +1,52 @@
 package com.dwinovo.chiikawa.client.render.layer;
 
+import com.dwinovo.chiikawa.client.render.AbstractPetRender;
 import com.dwinovo.chiikawa.entity.AbstractPet;
+import com.mojang.datafixers.util.Either;
 import software.bernie.geckolib.renderer.layer.BlockAndItemGeoLayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SwordItem;
-import net.minecraft.world.item.BowItem;
-import net.minecraft.world.item.HoeItem;
 import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.tags.ItemTags;
 import com.mojang.math.Axis;
 import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.cache.object.BakedGeoModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import com.mojang.blaze3d.vertex.PoseStack;
-import software.bernie.geckolib.renderer.GeoRenderer;
+import software.bernie.geckolib.constant.dataticket.DataTicket;
+import software.bernie.geckolib.renderer.base.GeoRenderer;
+
+import java.util.List;
 // Renders items held by pets.
-public class PetHeldItemLayer<T extends AbstractPet> extends BlockAndItemGeoLayer<T> {
+public class PetHeldItemLayer<T extends AbstractPet> extends BlockAndItemGeoLayer<T, Void, AbstractPetRender.PetRenderState> {
     private static final String RIGHT_HAND_BONE = "RightHandLocator";
+    private static final DataTicket<ItemStack> HELD_ITEM = DataTicket.create("chiikawa_held_item", ItemStack.class);
     // Set up the held-item layer.
-    public PetHeldItemLayer(GeoRenderer<T> renderer) {
+    public PetHeldItemLayer(GeoRenderer<T, Void, AbstractPetRender.PetRenderState> renderer) {
         super(renderer);
     }
     /**
-     * Returns the held item for a bone.
-     * @param bone the bone
-     * @param animatable the pet
-     * @return the held item stack
+     * Store the held item so it can be accessed during per-bone rendering.
+     * @param renderState the render state
+     * @param relatedObject unused
+     * @param renderState the render state
      */
     @Override
-    public ItemStack getStackForBone(GeoBone bone, T animatable) {
-        return RIGHT_HAND_BONE.equals(bone.getName()) ? animatable.getMainHandItem() : ItemStack.EMPTY;
+    public void addRenderData(T animatable, Void relatedObject, AbstractPetRender.PetRenderState renderState) {
+        renderState.addGeckolibData(HELD_ITEM, animatable.getMainHandItem());
     }
     /**
-     * Returns the display context for the held item.
-     * @param bone the bone
-     * @param stack the item stack
-     * @param animatable the pet
-     * @return the display context
+     * Provide the bones this layer should render for.
+     * @param renderState the render state
+     * @param model the baked model
+     * @return render data per bone
      */
     @Override
-    protected ItemDisplayContext getTransformTypeForStack(GeoBone bone, ItemStack stack, T animatable) {
-        return RIGHT_HAND_BONE.equals(bone.getName()) ? 
-            ItemDisplayContext.THIRD_PERSON_RIGHT_HAND : 
-            ItemDisplayContext.NONE;
+    protected List<RenderData<AbstractPetRender.PetRenderState>> getRelevantBones(AbstractPetRender.PetRenderState renderState, BakedGeoModel model) {
+        return List.of(new RenderData<>(
+            RIGHT_HAND_BONE,
+            ItemDisplayContext.THIRD_PERSON_RIGHT_HAND,
+            (bone, state) -> Either.left(state.getOrDefaultGeckolibData(HELD_ITEM, ItemStack.EMPTY))
+        ));
     }
     /**
      * Renders the held item.
@@ -50,14 +56,15 @@ public class PetHeldItemLayer<T extends AbstractPet> extends BlockAndItemGeoLaye
      * @param animatable the pet
      */
     @Override
-    protected void renderStackForBone(PoseStack poseStack, GeoBone bone, ItemStack stack, T animatable,
-                                     MultiBufferSource bufferSource, float partialTick, int packedLight, int packedOverlay) {
+    protected void renderStackForBone(PoseStack poseStack, GeoBone bone, ItemStack stack, ItemDisplayContext displayContext,
+                                      AbstractPetRender.PetRenderState renderState, MultiBufferSource bufferSource,
+                                      int packedLight, int packedOverlay) {
         // Apply base scale and item-specific transforms.
         poseStack.scale(0.80f, 0.80f, 0.80f);
-        if (stack.getItem() instanceof SwordItem || stack.getItem() instanceof HoeItem) {
+        if (stack.is(ItemTags.SWORDS) || stack.is(ItemTags.HOES)) {
             poseStack.mulPose(Axis.XP.rotationDegrees(-90f));
         }
-        if (stack.getItem() instanceof BowItem) {
+        if (stack.is(ItemTags.BOW_ENCHANTABLE)) {
             poseStack.translate(
                 0.10F,  
                 -0.20F, 
@@ -65,7 +72,7 @@ public class PetHeldItemLayer<T extends AbstractPet> extends BlockAndItemGeoLaye
             );
             poseStack.mulPose(Axis.XP.rotationDegrees(-90f));
         }
-        super.renderStackForBone(poseStack, bone, stack, animatable, bufferSource, partialTick, packedLight, packedOverlay);
+        super.renderStackForBone(poseStack, bone, stack, displayContext, renderState, bufferSource, packedLight, packedOverlay);
     }
 }
 
