@@ -26,16 +26,17 @@ repositories {
 		}
 	}
     maven { url = "https://api.modrinth.com/maven" }
-    maven {
+	maven {
 		url "https://maven.blamejared.com/"
 	}
+    maven { url "https://maven.shedaniel.me" }
 }
 
 base {
     archivesName = mod_id
 }
 
-// Mojang ships Java 21 to end users in 1.21.3, so mods should target Java 21.
+// Mojang ships Java 21 to end users in 1.21.4, so mods should target Java 21.
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 neoForge {
@@ -75,7 +76,7 @@ neoForge {
         }
 
         data {
-            data()
+            clientData()
 
             // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
             // gameDirectory = project.file('run-data')
@@ -148,8 +149,7 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
     from "src/main/templates"
     into "build/generated/sources/modMetadata"
 }
-// Include the output of "generateModMetadata" as an input directory for the build
-// this works with both building through Gradle and the IDE.
+
 sourceSets.main.resources.srcDir generateModMetadata
 // To avoid having to run "generateModMetadata" manually, make it run on every project reload
 neoForge.ideSyncTask generateModMetadata

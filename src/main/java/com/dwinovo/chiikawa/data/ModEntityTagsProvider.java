@@ -9,12 +9,11 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.EntityTypeTagsProvider;
 import net.minecraft.world.entity.EntityType;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class ModEntityTagsProvider extends EntityTypeTagsProvider{
-    public ModEntityTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider,ExistingFileHelper existingFileHelper)
+    public ModEntityTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider)
     {
-        super(output, lookupProvider, Chiikawa.MODID, existingFileHelper);
+        super(output, lookupProvider, Chiikawa.MODID);
     }
     @Override
     protected void addTags(HolderLookup.Provider provider) {

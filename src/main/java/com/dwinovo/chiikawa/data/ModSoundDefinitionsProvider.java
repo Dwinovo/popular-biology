@@ -4,24 +4,24 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import com.dwinovo.chiikawa.Chiikawa;
 import com.dwinovo.chiikawa.init.InitSounds;
 
 import net.minecraft.data.PackOutput;
-import net.minecraft.server.packs.PackType;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.data.SoundDefinition;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.common.data.SoundDefinitionsProvider;
 
 public final class ModSoundDefinitionsProvider extends SoundDefinitionsProvider {
     private static final int MAX_VARIANTS = 64;
-    private final ExistingFileHelper existingFileHelper;
+    private final Path resourceRoot;
 
-    public ModSoundDefinitionsProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
-        super(output, Chiikawa.MODID, existingFileHelper);
-        this.existingFileHelper = existingFileHelper;
+    public ModSoundDefinitionsProvider(PackOutput output) {
+        super(output, Chiikawa.MODID);
+        this.resourceRoot = resolveResourceRoot(output);
     }
 
     @Override
@@ -53,7 +53,7 @@ public final class ModSoundDefinitionsProvider extends SoundDefinitionsProvider 
         List<ResourceLocation> sounds = new java.util.ArrayList<>();
         for (int i = 1; i <= MAX_VARIANTS; i++) {
             ResourceLocation candidate = ResourceLocation.fromNamespaceAndPath(Chiikawa.MODID, basePath + "_" + i);
-            if (!existingFileHelper.exists(candidate, PackType.CLIENT_RESOURCES, ".ogg", "sounds")) {
+            if (!soundExists(candidate)) {
                 break;
             }
             sounds.add(candidate);
@@ -61,12 +61,33 @@ public final class ModSoundDefinitionsProvider extends SoundDefinitionsProvider 
 
         if (sounds.isEmpty()) {
             ResourceLocation direct = ResourceLocation.fromNamespaceAndPath(Chiikawa.MODID, basePath);
-            if (existingFileHelper.exists(direct, PackType.CLIENT_RESOURCES, ".ogg", "sounds")) {
+            if (soundExists(direct)) {
                 sounds.add(direct);
             }
         }
 
         return sounds;
+    }
+
+    private boolean soundExists(ResourceLocation sound) {
+        Path path = resourceRoot.resolve("assets")
+                .resolve(sound.getNamespace())
+                .resolve("sounds")
+                .resolve(sound.getPath() + ".ogg");
+        return Files.exists(path);
+    }
+
+    private static Path resolveResourceRoot(PackOutput output) {
+        Path outputRoot = output.getOutputFolder(PackOutput.Target.RESOURCE_PACK);
+        Path current = outputRoot.toAbsolutePath();
+        for (int i = 0; i < 8 && current != null; i++) {
+            Path candidate = current.resolve("src").resolve("main").resolve("resources");
+            if (Files.exists(candidate)) {
+                return candidate;
+            }
+            current = current.getParent();
+        }
+        return Path.of(System.getProperty("user.dir"), "src", "main", "resources");
     }
 }
 

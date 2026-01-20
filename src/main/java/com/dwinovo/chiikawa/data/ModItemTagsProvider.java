@@ -11,14 +11,13 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.world.item.Items;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.minecraft.world.level.block.Block;
 
 
 public class ModItemTagsProvider extends ItemTagsProvider {
     public ModItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider,
-                               ExistingFileHelper existingFileHelper) {
-        super(output, lookupProvider, CompletableFuture.completedFuture(TagsProvider.TagLookup.empty()),
-                Chiikawa.MODID, existingFileHelper);
+                               CompletableFuture<TagsProvider.TagLookup<Block>> blockTags) {
+        super(output, lookupProvider, blockTags, Chiikawa.MODID);
     }
 
     @Override

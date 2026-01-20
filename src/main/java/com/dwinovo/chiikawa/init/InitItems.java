@@ -17,25 +17,25 @@ public final class InitItems {
 
     public static final DeferredItem<SpawnEggItem> USAGI_SPAWN_EGG =
             ITEMS.registerItem("usagi_spawn_egg",
-                    properties -> new SpawnEggItem(InitEntity.USAGI_PET.get(), 0xf28907, 0xF2CB07, properties));
+                    properties -> new SpawnEggItem(InitEntity.USAGI_PET.get(), properties));
     public static final DeferredItem<SpawnEggItem> HACHIWARE_SPAWN_EGG =
             ITEMS.registerItem("hachiware_spawn_egg",
-                    properties -> new SpawnEggItem(InitEntity.HACHIWARE_PET.get(), 0x00FFFF, 0x89cff0, properties));
+                    properties -> new SpawnEggItem(InitEntity.HACHIWARE_PET.get(), properties));
     public static final DeferredItem<SpawnEggItem> CHIIKAWA_SPAWN_EGG =
             ITEMS.registerItem("chiikawa_spawn_egg",
-                    properties -> new SpawnEggItem(InitEntity.CHIIKAWA_PET.get(), 0xE7CCCC, 0xEDE8DC, properties));
+                    properties -> new SpawnEggItem(InitEntity.CHIIKAWA_PET.get(), properties));
     public static final DeferredItem<SpawnEggItem> SHISA_SPAWN_EGG =
             ITEMS.registerItem("shisa_spawn_egg",
-                    properties -> new SpawnEggItem(InitEntity.SHISA_PET.get(), 0xFFA500, 0xDFFF00, properties));
+                    properties -> new SpawnEggItem(InitEntity.SHISA_PET.get(), properties));
     public static final DeferredItem<SpawnEggItem> MOMONGA_SPAWN_EGG =
             ITEMS.registerItem("momonga_spawn_egg",
-                    properties -> new SpawnEggItem(InitEntity.MOMONGA_PET.get(), 0x0ABAB5, 0x00008B, properties));
+                    properties -> new SpawnEggItem(InitEntity.MOMONGA_PET.get(), properties));
     public static final DeferredItem<SpawnEggItem> KURIMANJU_SPAWN_EGG =
             ITEMS.registerItem("kurimanju_spawn_egg",
-                    properties -> new SpawnEggItem(InitEntity.KURIMANJU_PET.get(), 0xdac24e, 0xda8b4e, properties));
+                    properties -> new SpawnEggItem(InitEntity.KURIMANJU_PET.get(), properties));
     public static final DeferredItem<SpawnEggItem> RAKKO_SPAWN_EGG =
             ITEMS.registerItem("rakko_spawn_egg",
-                    properties -> new SpawnEggItem(InitEntity.RAKKO_PET.get(), 0xeaffd0, 0xeaeaea, properties));
+                    properties -> new SpawnEggItem(InitEntity.RAKKO_PET.get(), properties));
     public static final DeferredItem<Item> USAGI_WEAPON =
             ITEMS.registerItem("usagi_weapon", UsagiWeapon::new, new Item.Properties());
     public static final DeferredItem<Item> HACHIWARE_WEAPON =
