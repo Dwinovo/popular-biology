@@ -18,11 +18,11 @@ import java.util.Map;
 public abstract class AbstractPetRender<T extends AbstractPet> extends GeoEntityRenderer<T, AbstractPetRender.PetRenderState> {
     protected AbstractPetRender(Context renderManager, GeoModel<T> model) {
         super(renderManager, model);
-        addRenderLayer(new PetHeldItemLayer<>(this));
+        withRenderLayer(new PetHeldItemLayer<>(this));
     }
 
     @Override
-    protected PetRenderState createBaseRenderState(T entity) {
+    public PetRenderState createRenderState(T entity, Void relatedObject) {
         return new PetRenderState();
     }
 

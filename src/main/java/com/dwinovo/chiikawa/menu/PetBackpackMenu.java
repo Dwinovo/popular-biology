@@ -88,7 +88,7 @@ public class PetBackpackMenu extends AbstractContainerMenu {
 
     @Override
     public ItemStack quickMoveStack(Player player, int slotIndex) {
-        if (player.level().isClientSide) {
+        if (player.level().isClientSide()) {
             return ItemStack.EMPTY;
         }
         ItemStack result = ItemStack.EMPTY;

@@ -25,8 +25,8 @@ public final class InitCapabilities {
     }
 
     private static <T extends AbstractPet> void registerPet(RegisterCapabilitiesEvent event, EntityType<T> type) {
-        event.registerEntity(Capabilities.ItemHandler.ENTITY, type, (pet, context) -> pet.getBackpackHandler());
-        event.registerEntity(Capabilities.ItemHandler.ENTITY_AUTOMATION, type, (pet, context) -> pet.getBackpackHandler());
+        event.registerEntity(Capabilities.Item.ENTITY, type, (pet, context) -> pet.getBackpackHandler());
+        event.registerEntity(Capabilities.Item.ENTITY_AUTOMATION, type, (pet, context) -> pet.getBackpackHandler());
     }
 }
 

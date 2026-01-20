@@ -36,7 +36,7 @@ base {
     archivesName = mod_id
 }
 
-// Mojang ships Java 21 to end users in 1.21.8, so mods should target Java 21.
+// Mojang ships Java 21 to end users in 1.21.10, so mods should target Java 21.
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 neoForge {
@@ -151,7 +151,6 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
 sourceSets.main.resources.srcDir generateModMetadata
 // To avoid having to run "generateModMetadata" manually, make it run on every project reload
 neoForge.ideSyncTask generateModMetadata
-
 // Example configuration to allow publishing using the maven-publish plugin
 publishing {
     publications {

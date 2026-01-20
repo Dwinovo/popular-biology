@@ -6,11 +6,10 @@ import com.mojang.datafixers.util.Either;
 import software.bernie.geckolib.renderer.layer.BlockAndItemGeoLayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.tags.ItemTags;
-import com.mojang.math.Axis;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import com.mojang.blaze3d.vertex.PoseStack;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
@@ -31,7 +30,7 @@ public class PetHeldItemLayer<T extends AbstractPet> extends BlockAndItemGeoLaye
      * @param renderState the render state
      */
     @Override
-    public void addRenderData(T animatable, Void relatedObject, AbstractPetRender.PetRenderState renderState) {
+    public void addRenderData(T animatable, Void relatedObject, AbstractPetRender.PetRenderState renderState, float partialTick) {
         renderState.addGeckolibData(HELD_ITEM, animatable.getMainHandItem());
     }
     /**
@@ -56,23 +55,10 @@ public class PetHeldItemLayer<T extends AbstractPet> extends BlockAndItemGeoLaye
      * @param animatable the pet
      */
     @Override
-    protected void renderStackForBone(PoseStack poseStack, GeoBone bone, ItemStack stack, ItemDisplayContext displayContext,
-                                      AbstractPetRender.PetRenderState renderState, MultiBufferSource bufferSource,
-                                      int packedLight, int packedOverlay) {
-        // Apply base scale and item-specific transforms.
-        poseStack.scale(0.80f, 0.80f, 0.80f);
-        if (stack.is(ItemTags.SWORDS) || stack.is(ItemTags.HOES)) {
-            poseStack.mulPose(Axis.XP.rotationDegrees(-90f));
-        }
-        if (stack.is(ItemTags.BOW_ENCHANTABLE)) {
-            poseStack.translate(
-                0.10F,  
-                -0.20F, 
-                -0.10F
-            );
-            poseStack.mulPose(Axis.XP.rotationDegrees(-90f));
-        }
-        super.renderStackForBone(poseStack, bone, stack, displayContext, renderState, bufferSource, packedLight, packedOverlay);
+    protected void submitItemStackRender(PoseStack poseStack, GeoBone bone, ItemStack stack, ItemDisplayContext displayContext,
+                                         AbstractPetRender.PetRenderState renderState, SubmitNodeCollector renderTasks,
+                                         CameraRenderState cameraState, int packedLight, int packedOverlay, int renderColor) {
+        super.submitItemStackRender(poseStack, bone, stack, displayContext, renderState, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
     }
 }
 

@@ -16,7 +16,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
 import net.minecraft.core.Direction;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 // Walks to the delivery container.
 public class WalkToContainerBehavior extends Behavior<AbstractPet>{
     // Required memories.
@@ -90,7 +92,7 @@ public class WalkToContainerBehavior extends Behavior<AbstractPet>{
     }
 
     private static boolean canInsertContainer(ServerLevel level, net.minecraft.core.BlockPos pos, AbstractPet pet) {
-        IItemHandler handler = findItemHandler(level, pos);
+        ResourceHandler<ItemResource> handler = findItemHandler(level, pos);
         if (handler != null) {
             net.minecraft.world.Container backpack = pet.getBackpack();
             for (int i = 0; i < backpack.getContainerSize(); i++) {
@@ -100,8 +102,8 @@ public class WalkToContainerBehavior extends Behavior<AbstractPet>{
                 }
                 net.minecraft.world.item.ItemStack testStack = stack.copy();
                 testStack.setCount(1);
-                for (int slot = 0; slot < handler.getSlots(); slot++) {
-                    net.minecraft.world.item.ItemStack remaining = handler.insertItem(slot, testStack, true);
+                for (int slot = 0; slot < handler.size(); slot++) {
+                    net.minecraft.world.item.ItemStack remaining = ItemUtil.insertItemReturnRemaining(handler, slot, testStack, true, null);
                     if (remaining.isEmpty()) {
                         return true;
                     }
@@ -133,13 +135,13 @@ public class WalkToContainerBehavior extends Behavior<AbstractPet>{
         return false;
     }
 
-    private static IItemHandler findItemHandler(ServerLevel level, net.minecraft.core.BlockPos pos) {
-        IItemHandler handler = level.getCapability(Capabilities.ItemHandler.BLOCK, pos, null);
+    private static ResourceHandler<ItemResource> findItemHandler(ServerLevel level, net.minecraft.core.BlockPos pos) {
+        ResourceHandler<ItemResource> handler = level.getCapability(Capabilities.Item.BLOCK, pos, null);
         if (handler != null) {
             return handler;
         }
         for (Direction direction : Direction.values()) {
-            handler = level.getCapability(Capabilities.ItemHandler.BLOCK, pos, direction);
+            handler = level.getCapability(Capabilities.Item.BLOCK, pos, direction);
             if (handler != null) {
                 return handler;
             }

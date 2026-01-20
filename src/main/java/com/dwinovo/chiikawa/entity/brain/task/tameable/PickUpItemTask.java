@@ -14,7 +14,9 @@ import com.dwinovo.chiikawa.init.InitMemory;
 import com.dwinovo.chiikawa.init.InitTag;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 import net.minecraft.world.item.ItemStack;
 // Picks up nearby items.
 public class PickUpItemTask extends Behavior<AbstractPet> {
@@ -83,7 +85,7 @@ public class PickUpItemTask extends Behavior<AbstractPet> {
         if (entity.distanceToSqr(target) > PICKUP_DISTANCE_SQ) {
             return;
         }
-        IItemHandler handler = entity.getCapability(Capabilities.ItemHandler.ENTITY, null);
+        ResourceHandler<ItemResource> handler = entity.getCapability(Capabilities.Item.ENTITY, null);
         if (handler == null) {
             handler = entity.getBackpackHandler();
         }
@@ -103,10 +105,10 @@ public class PickUpItemTask extends Behavior<AbstractPet> {
         entity.getBrain().eraseMemory(InitMemory.PICKABLE_ITEM.get());
     }
 
-    private static ItemStack insertIntoHandler(IItemHandler handler, ItemStack stack) {
+    private static ItemStack insertIntoHandler(ResourceHandler<ItemResource> handler, ItemStack stack) {
         ItemStack remaining = stack.copy();
-        for (int slot = 0; slot < handler.getSlots() && !remaining.isEmpty(); slot++) {
-            remaining = handler.insertItem(slot, remaining, false);
+        for (int slot = 0; slot < handler.size() && !remaining.isEmpty(); slot++) {
+            remaining = ItemUtil.insertItemReturnRemaining(handler, slot, remaining, false, null);
         }
         return remaining;
     }

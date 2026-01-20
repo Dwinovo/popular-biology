@@ -48,7 +48,7 @@ public final class PetInteractHandler {
     }
 
     private static InteractionResult handleTame(Level level, AbstractPet pet, Player player, InteractionHand hand) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             if (!player.isCreative()) {
                 player.getItemInHand(hand).shrink(1);
             }
@@ -61,11 +61,11 @@ public final class PetInteractHandler {
                 level.broadcastEntityEvent(pet, (byte) 6);
             }
         }
-        return level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
+        return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
     }
 
     private static InteractionResult handleFeed(Level level, AbstractPet pet, Player player, InteractionHand hand) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             if (!player.isCreative()) {
                 player.getItemInHand(hand).shrink(1);
             }
@@ -73,11 +73,11 @@ public final class PetInteractHandler {
                 pet.heal(FEED_HEAL);
             }
         }
-        return level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
+        return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
     }
 
     private static InteractionResult handleModeChange(Level level, AbstractPet pet) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             PetMode next = pet.getPetMode().next();
             pet.setPetMode(next);
             if (next == PetMode.WORK) {
@@ -90,17 +90,17 @@ public final class PetInteractHandler {
                 owner.displayClientMessage(next.getMessage(pet), true);
             }
         }
-        return level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
+        return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
     }
 
     private static InteractionResult handleOpenMenu(Level level, AbstractPet pet, Player player) {
-        if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+        if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
             serverPlayer.openMenu(new SimpleMenuProvider(
                 (containerId, inventory, p) -> new PetBackpackMenu(containerId, inventory, pet),
                 Component.translatable("menu.chiikawa.pet_backpack")
             ));
         }
-        return level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
+        return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
     }
 }
 

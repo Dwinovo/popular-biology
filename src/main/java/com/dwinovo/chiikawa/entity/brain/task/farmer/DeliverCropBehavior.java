@@ -24,7 +24,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 
 // Delivers tagged items to a nearby container.
 public class DeliverCropBehavior extends Behavior<AbstractPet> {
@@ -158,7 +160,7 @@ public class DeliverCropBehavior extends Behavior<AbstractPet> {
             return;
         }
 
-        IItemHandler handler = findItemHandler(world, containerPos);
+        ResourceHandler<ItemResource> handler = findItemHandler(world, containerPos);
         if (handler != null) {
             if (tryInsertOne(handler, sourceStack)) {
                 closeIfFinished(world, pet, containerPos);
@@ -239,7 +241,7 @@ public class DeliverCropBehavior extends Behavior<AbstractPet> {
     }
 
     private static boolean canInsertContainer(ServerLevel level, BlockPos pos, Container source, TagKey<Item> tag) {
-        IItemHandler handler = findItemHandler(level, pos);
+        ResourceHandler<ItemResource> handler = findItemHandler(level, pos);
         if (handler != null) {
             for (int i = 0; i < source.getContainerSize(); i++) {
                 ItemStack stack = source.getItem(i);
@@ -248,8 +250,8 @@ public class DeliverCropBehavior extends Behavior<AbstractPet> {
                 }
                 ItemStack testStack = stack.copy();
                 testStack.setCount(1);
-                for (int slot = 0; slot < handler.getSlots(); slot++) {
-                    ItemStack remaining = handler.insertItem(slot, testStack, true);
+                for (int slot = 0; slot < handler.size(); slot++) {
+                    ItemStack remaining = ItemUtil.insertItemReturnRemaining(handler, slot, testStack, true, null);
                     if (remaining.isEmpty()) {
                         return true;
                     }
@@ -280,13 +282,13 @@ public class DeliverCropBehavior extends Behavior<AbstractPet> {
         return false;
     }
 
-    private static IItemHandler findItemHandler(ServerLevel level, BlockPos pos) {
-        IItemHandler handler = level.getCapability(Capabilities.ItemHandler.BLOCK, pos, null);
+    private static ResourceHandler<ItemResource> findItemHandler(ServerLevel level, BlockPos pos) {
+        ResourceHandler<ItemResource> handler = level.getCapability(Capabilities.Item.BLOCK, pos, null);
         if (handler != null) {
             return handler;
         }
         for (Direction direction : Direction.values()) {
-            handler = level.getCapability(Capabilities.ItemHandler.BLOCK, pos, direction);
+            handler = level.getCapability(Capabilities.Item.BLOCK, pos, direction);
             if (handler != null) {
                 return handler;
             }
@@ -294,11 +296,11 @@ public class DeliverCropBehavior extends Behavior<AbstractPet> {
         return null;
     }
 
-    private static boolean tryInsertOne(IItemHandler handler, ItemStack sourceStack) {
+    private static boolean tryInsertOne(ResourceHandler<ItemResource> handler, ItemStack sourceStack) {
         ItemStack toInsert = sourceStack.copy();
         toInsert.setCount(1);
-        for (int slot = 0; slot < handler.getSlots(); slot++) {
-            ItemStack remaining = handler.insertItem(slot, toInsert, false);
+        for (int slot = 0; slot < handler.size(); slot++) {
+            ItemStack remaining = ItemUtil.insertItemReturnRemaining(handler, slot, toInsert, false, null);
             if (remaining.isEmpty()) {
                 sourceStack.shrink(1);
                 return true;

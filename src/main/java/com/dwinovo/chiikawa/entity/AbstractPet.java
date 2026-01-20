@@ -42,8 +42,9 @@ import software.bernie.geckolib.animatable.processing.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.wrapper.InvWrapper;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.sounds.SoundEvent;
@@ -83,7 +84,7 @@ public class AbstractPet extends TamableAnimal implements GeoEntity, RangedAttac
     );
     private final AnimatableInstanceCache animatableInstanceCache = GeckoLibUtil.createInstanceCache(this);
     private final SimpleContainer backpack = new SimpleContainer(BACKPACK_SIZE);
-    private final IItemHandler backpackHandler = new InvWrapper(backpack);
+    private final ResourceHandler<ItemResource> backpackHandler = VanillaContainerWrapper.of(backpack);
 
     protected AbstractPet(EntityType<? extends TamableAnimal> entityType, Level level) {
         super(entityType, level);
@@ -99,7 +100,7 @@ public class AbstractPet extends TamableAnimal implements GeoEntity, RangedAttac
         return backpack;
     }
 
-    public IItemHandler getBackpackHandler() {
+    public ResourceHandler<ItemResource> getBackpackHandler() {
         return backpackHandler;
     }
 
@@ -124,7 +125,7 @@ public class AbstractPet extends TamableAnimal implements GeoEntity, RangedAttac
     }
 
     private void refreshJobFromMainhand(boolean forceRefresh) {
-        if (level().isClientSide) {
+        if (level().isClientSide()) {
             return;
         }
         
@@ -318,7 +319,7 @@ public class AbstractPet extends TamableAnimal implements GeoEntity, RangedAttac
     }
 
     public void playAttackSound() {
-        if (!level().isClientSide) {
+        if (!level().isClientSide()) {
             SoundEvent sound = getSoundSet().getAttackSound();
             if (sound != null) {
                 playSound(sound, 1.0F, 1.0F);
@@ -327,7 +328,7 @@ public class AbstractPet extends TamableAnimal implements GeoEntity, RangedAttac
     }
 
     public void playTameSound() {
-        if (!level().isClientSide) {
+        if (!level().isClientSide()) {
             SoundEvent sound = getSoundSet().getTameSound();
             if (sound != null) {
                 playSound(sound, 1.0F, 1.0F);
