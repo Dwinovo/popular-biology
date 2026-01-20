@@ -2,12 +2,10 @@ package com.dwinovo.chiikawa.item;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SwordItem;
-import net.minecraft.world.item.Tiers;
 
 public class HachiwareWeapon extends SwordItem {
-    public HachiwareWeapon() {
-        super(Tiers.STONE,
-                new Item.Properties().attributes(SwordItem.createAttributes(Tiers.STONE, 3, -2.4F)));
+    public HachiwareWeapon(Item.Properties properties) {
+        super(net.minecraft.world.item.ToolMaterial.STONE, 3.0F, -2.4F, properties);
     }
 }
 

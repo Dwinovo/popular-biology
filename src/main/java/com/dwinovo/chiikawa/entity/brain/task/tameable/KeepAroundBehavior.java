@@ -110,10 +110,10 @@ public class KeepAroundBehavior<E extends AbstractPet> extends Behavior<E> {
             return false;
         }
         boolean foundGround = false;
-        while (!foundGround && pos.getY() > level.getMinBuildHeight()) {
+        while (!foundGround && pos.getY() > level.getMinY()) {
             BlockPos below = pos.below();
             BlockState belowState = level.getBlockState(below);
-            if (belowState.isSolidRender(level, below)) {
+            if (belowState.isSolidRender()) {
                 foundGround = true;
             }
             else {

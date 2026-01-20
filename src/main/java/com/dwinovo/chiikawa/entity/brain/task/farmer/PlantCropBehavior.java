@@ -21,7 +21,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemNameBlockItem;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 // Plants a crop at the remembered position.
@@ -94,7 +93,6 @@ public class PlantCropBehavior extends Behavior<AbstractPet>{
      * @param pet the pet entity
      * @param pGameTime the current time
      */
-    @SuppressWarnings("null")
     @Override
     protected void stop(ServerLevel world, AbstractPet pet, long pGameTime) {
         Brain<AbstractPet> brain = pet.getBrain();
@@ -118,9 +116,6 @@ public class PlantCropBehavior extends Behavior<AbstractPet>{
         Item item = seed.getItem();
         if (item instanceof BlockItem blockItem) {
             return Optional.of(blockItem.getBlock().defaultBlockState());
-        }
-        if (item instanceof ItemNameBlockItem nameBlockItem) {
-            return Optional.of(nameBlockItem.getBlock().defaultBlockState());
         }
         return Optional.empty();
     }

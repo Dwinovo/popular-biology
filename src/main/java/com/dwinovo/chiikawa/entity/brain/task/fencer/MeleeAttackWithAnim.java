@@ -7,11 +7,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.behavior.EntityTracker;
 import net.minecraft.world.entity.ai.behavior.OneShot;
 import net.minecraft.world.entity.ai.behavior.declarative.BehaviorBuilder;
-import net.minecraft.world.entity.ai.behavior.declarative.MemoryAccessor;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.NearestVisibleLivingEntities;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
 
 public final class MeleeAttackWithAnim {
@@ -38,7 +36,7 @@ public final class MeleeAttackWithAnim {
                         lookTarget.set(new EntityTracker(target, true));
                         pet.triggerAnim("main", "use_mainhand");
                         pet.swing(InteractionHand.MAIN_HAND);
-                        pet.doHurtTarget(target);
+                        pet.doHurtTarget(level, target);
                         pet.playAttackSound();
                         cooldown.setWithExpiry(true, (long) cooldownBetweenAttacks);
                         return true;

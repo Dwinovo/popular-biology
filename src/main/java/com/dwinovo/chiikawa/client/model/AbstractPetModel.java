@@ -11,6 +11,7 @@ import software.bernie.geckolib.constant.DataTickets;
 
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
+import software.bernie.geckolib.renderer.GeoRenderer;
 
 public abstract class AbstractPetModel<T extends AbstractPet> extends GeoModel<T> {
     private final String id;
@@ -20,12 +21,12 @@ public abstract class AbstractPetModel<T extends AbstractPet> extends GeoModel<T
     }
 
     @Override
-    public ResourceLocation getModelResource(T animatable) {
+    public ResourceLocation getModelResource(T animatable, GeoRenderer<T> renderer) {
         return ResourceLocation.fromNamespaceAndPath(Chiikawa.MODID, "geo/" + id + ".geo.json");
     }
 
     @Override
-    public ResourceLocation getTextureResource(T animatable) {
+    public ResourceLocation getTextureResource(T animatable, GeoRenderer<T> renderer) {
         return ResourceLocation.fromNamespaceAndPath(Chiikawa.MODID, "textures/entities/" + id + ".png");
     }
 

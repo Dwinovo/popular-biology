@@ -26,39 +26,39 @@ public final class InitEntity {
     public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(Registries.ENTITY_TYPE, Chiikawa.MODID);
 
     public static final DeferredHolder<EntityType<?>, EntityType<UsagiPet>> USAGI_PET = ENTITY_TYPES.register("usagi",
-            () -> EntityType.Builder.of(UsagiPet::new, MobCategory.CREATURE)
+            id -> EntityType.Builder.of(UsagiPet::new, MobCategory.CREATURE)
                     .sized(0.6F, 0.8F)
-                    .build(ResourceLocation.fromNamespaceAndPath(Chiikawa.MODID, "usagi").toString()));
+                    .build(net.minecraft.resources.ResourceKey.create(Registries.ENTITY_TYPE, id)));
 
     public static final DeferredHolder<EntityType<?>, EntityType<HachiwarePet>> HACHIWARE_PET = ENTITY_TYPES.register("hachiware",
-            () -> EntityType.Builder.of(HachiwarePet::new, MobCategory.CREATURE)
+            id -> EntityType.Builder.of(HachiwarePet::new, MobCategory.CREATURE)
                     .sized(0.6F, 0.8F)
-                    .build(ResourceLocation.fromNamespaceAndPath(Chiikawa.MODID, "hachiware").toString()));
+                    .build(net.minecraft.resources.ResourceKey.create(Registries.ENTITY_TYPE, id)));
 
     public static final DeferredHolder<EntityType<?>, EntityType<ChiikawaPet>> CHIIKAWA_PET = ENTITY_TYPES.register("chiikawa",
-            () -> EntityType.Builder.of(ChiikawaPet::new, MobCategory.CREATURE)
+            id -> EntityType.Builder.of(ChiikawaPet::new, MobCategory.CREATURE)
                     .sized(0.6F, 0.8F)
-                    .build(ResourceLocation.fromNamespaceAndPath(Chiikawa.MODID, "chiikawa").toString()));
+                    .build(net.minecraft.resources.ResourceKey.create(Registries.ENTITY_TYPE, id)));
 
     public static final DeferredHolder<EntityType<?>, EntityType<ShisaPet>> SHISA_PET = ENTITY_TYPES.register("shisa",
-            () -> EntityType.Builder.of(ShisaPet::new, MobCategory.CREATURE)
+            id -> EntityType.Builder.of(ShisaPet::new, MobCategory.CREATURE)
                     .sized(0.6F, 0.8F)
-                    .build(ResourceLocation.fromNamespaceAndPath(Chiikawa.MODID, "shisa").toString()));
+                    .build(net.minecraft.resources.ResourceKey.create(Registries.ENTITY_TYPE, id)));
 
     public static final DeferredHolder<EntityType<?>, EntityType<MomongaPet>> MOMONGA_PET = ENTITY_TYPES.register("momonga",
-            () -> EntityType.Builder.of(MomongaPet::new, MobCategory.CREATURE)
+            id -> EntityType.Builder.of(MomongaPet::new, MobCategory.CREATURE)
                     .sized(0.6F, 0.8F)
-                    .build(ResourceLocation.fromNamespaceAndPath(Chiikawa.MODID, "momonga").toString()));
+                    .build(net.minecraft.resources.ResourceKey.create(Registries.ENTITY_TYPE, id)));
 
     public static final DeferredHolder<EntityType<?>, EntityType<KurimanjuPet>> KURIMANJU_PET = ENTITY_TYPES.register("kurimanju",
-            () -> EntityType.Builder.of(KurimanjuPet::new, MobCategory.CREATURE)
+            id -> EntityType.Builder.of(KurimanjuPet::new, MobCategory.CREATURE)
                     .sized(0.6F, 0.8F)
-                    .build(ResourceLocation.fromNamespaceAndPath(Chiikawa.MODID, "kurimanju").toString()));
+                    .build(net.minecraft.resources.ResourceKey.create(Registries.ENTITY_TYPE, id)));
 
     public static final DeferredHolder<EntityType<?>, EntityType<RakkoPet>> RAKKO_PET = ENTITY_TYPES.register("rakko",
-            () -> EntityType.Builder.of(RakkoPet::new, MobCategory.CREATURE)
+            id -> EntityType.Builder.of(RakkoPet::new, MobCategory.CREATURE)
                     .sized(0.6F, 0.8F)
-                    .build(ResourceLocation.fromNamespaceAndPath(Chiikawa.MODID, "rakko").toString()));
+                    .build(net.minecraft.resources.ResourceKey.create(Registries.ENTITY_TYPE, id)));
 
    
     public static void register(IEventBus modEventBus) {

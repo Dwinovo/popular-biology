@@ -61,7 +61,7 @@ public final class PetInteractHandler {
                 level.broadcastEntityEvent(pet, (byte) 6);
             }
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
     }
 
     private static InteractionResult handleFeed(Level level, AbstractPet pet, Player player, InteractionHand hand) {
@@ -73,7 +73,7 @@ public final class PetInteractHandler {
                 pet.heal(FEED_HEAL);
             }
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
     }
 
     private static InteractionResult handleModeChange(Level level, AbstractPet pet) {
@@ -90,7 +90,7 @@ public final class PetInteractHandler {
                 owner.displayClientMessage(next.getMessage(pet), true);
             }
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
     }
 
     private static InteractionResult handleOpenMenu(Level level, AbstractPet pet, Player player) {
@@ -100,7 +100,7 @@ public final class PetInteractHandler {
                 Component.translatable("menu.chiikawa.pet_backpack")
             ));
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return level.isClientSide ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
     }
 }
 
