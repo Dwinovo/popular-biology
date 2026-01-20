@@ -18,25 +18,25 @@ version = mod_version
 group = mod_group_id
 
 repositories {
-    maven {
-		name = 'GeckoLib'
-		url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
-		content {
-			includeGroup("software.bernie.geckolib")
-		}
-	}
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'GeckoLib'
+                url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+            }
+        }
+        filter { 
+            includeGroup('software.bernie.geckolib')
+        }
+    }
     maven { url = "https://api.modrinth.com/maven" }
-	maven {
-		url "https://maven.blamejared.com/"
-	}
-    maven { url "https://maven.shedaniel.me" }
 }
 
 base {
     archivesName = mod_id
 }
 
-// Mojang ships Java 21 to end users in 1.21.4, so mods should target Java 21.
+// Mojang ships Java 21 to end users in 1.21.5, so mods should target Java 21.
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 neoForge {
@@ -124,11 +124,9 @@ configurations {
 
 dependencies {
     jarJar("software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}")
-    implementation("software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}")
+    implementation"software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
     compileOnly "maven.modrinth:jade:${jade_version}"
     localRuntime "maven.modrinth:jade:${jade_version}"
-    compileOnly "tschipp.carryon:carryon-neoforge-${minecraft_version}:${carryon_version}"
-    localRuntime "tschipp.carryon:carryon-neoforge-${minecraft_version}:${carryon_version}"
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
@@ -138,7 +136,6 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             minecraft_version      : minecraft_version,
             minecraft_version_range: minecraft_version_range,
             neo_version            : neo_version,
-            loader_version_range   : loader_version_range,
             mod_id                 : mod_id,
             mod_name               : mod_name,
             mod_license            : mod_license,
@@ -149,7 +146,8 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
     from "src/main/templates"
     into "build/generated/sources/modMetadata"
 }
-
+// Include the output of "generateModMetadata" as an input directory for the build
+// this works with both building through Gradle and the IDE.
 sourceSets.main.resources.srcDir generateModMetadata
 // To avoid having to run "generateModMetadata" manually, make it run on every project reload
 neoForge.ideSyncTask generateModMetadata

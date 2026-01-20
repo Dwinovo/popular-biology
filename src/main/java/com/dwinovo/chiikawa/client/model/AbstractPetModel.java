@@ -5,15 +5,15 @@ import com.dwinovo.chiikawa.entity.AbstractPet;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.constant.DataTickets;
-
 import software.bernie.geckolib.model.GeoModel;
-import software.bernie.geckolib.model.data.EntityModelData;
-import software.bernie.geckolib.renderer.GeoRenderer;
+import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.constant.dataticket.DataTicket;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
 
 public abstract class AbstractPetModel<T extends AbstractPet> extends GeoModel<T> {
+    private static final DataTicket<Float> LIMB_SWING_AMOUNT = DataTicket.create("chiikawa_limb_swing_amount", Float.class);
     private final String id;
 
     protected AbstractPetModel(String id) {
@@ -21,28 +21,33 @@ public abstract class AbstractPetModel<T extends AbstractPet> extends GeoModel<T
     }
 
     @Override
-    public ResourceLocation getModelResource(T animatable, GeoRenderer<T> renderer) {
-        return ResourceLocation.fromNamespaceAndPath(Chiikawa.MODID, "geo/" + id + ".geo.json");
+    public ResourceLocation getModelResource(GeoRenderState renderState) {
+        return ResourceLocation.fromNamespaceAndPath(Chiikawa.MODID, id);
     }
 
     @Override
-    public ResourceLocation getTextureResource(T animatable, GeoRenderer<T> renderer) {
+    public ResourceLocation getTextureResource(GeoRenderState renderState) {
         return ResourceLocation.fromNamespaceAndPath(Chiikawa.MODID, "textures/entities/" + id + ".png");
     }
 
     @Override
     public ResourceLocation getAnimationResource(T animatable) {
-        return ResourceLocation.fromNamespaceAndPath(Chiikawa.MODID, "animations/" + id + ".animation.json");
+        return ResourceLocation.fromNamespaceAndPath(Chiikawa.MODID, id);
     }
 
     @Override
-    public void setCustomAnimations(T animatable, long instanceId, AnimationState<T> animationState) {
-        super.setCustomAnimations(animatable, instanceId, animationState);
-        EntityModelData modelData = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
+    public void addAdditionalStateData(T animatable, GeoRenderState renderState) {
+        float partialTick = renderState.getOrDefaultGeckolibData(DataTickets.PARTIAL_TICK, 0f);
+        renderState.addGeckolibData(LIMB_SWING_AMOUNT, animatable.walkAnimation.speed(partialTick));
+    }
+
+    @Override
+    public void setCustomAnimations(AnimationState<T> animationState) {
+        super.setCustomAnimations(animationState);
         GeoBone headBone = this.getAnimationProcessor().getBone("AllHead");
         if (headBone != null) {
-            float netHeadYaw = modelData.netHeadYaw();
-            float headPitch = modelData.headPitch();
+            float netHeadYaw = animationState.getData(DataTickets.ENTITY_YAW);
+            float headPitch = animationState.getData(DataTickets.ENTITY_PITCH);
             headBone.setRotY(netHeadYaw * ((float) Math.PI / 180F));
             headBone.setRotX(headPitch * ((float) Math.PI / 180F));
         }
@@ -51,8 +56,8 @@ public abstract class AbstractPetModel<T extends AbstractPet> extends GeoModel<T
         GeoBone rightEarBone = this.getAnimationProcessor().getBone("RightEar");
         GeoBone tailBone = this.getAnimationProcessor().getBone("tail");
 
-        double ageInTicks = animationState.getData(DataTickets.TICK);
-        float limbSwingAmount = animationState.getLimbSwingAmount();
+        double animationTicks = animationState.getData(DataTickets.ANIMATION_TICKS);
+        float limbSwingAmount = animationState.getDataOrDefault(LIMB_SWING_AMOUNT, 0f);
 
         float breathingSpeed = 0.1F;
         float earSwingAmount = 0.1F;
@@ -60,17 +65,17 @@ public abstract class AbstractPetModel<T extends AbstractPet> extends GeoModel<T
         float earBackwardSwing = -limbSwingAmount * 1.0F;
 
         if (leftEarBone != null) {
-            leftEarBone.setRotY(Mth.cos((float) ageInTicks * breathingSpeed) * earSwingAmount - earBackwardSwing);
-            leftEarBone.setRotZ(Mth.sin((float) ageInTicks * breathingSpeed) * earTwistAmount);
+            leftEarBone.setRotY(Mth.cos((float) animationTicks * breathingSpeed) * earSwingAmount - earBackwardSwing);
+            leftEarBone.setRotZ(Mth.sin((float) animationTicks * breathingSpeed) * earTwistAmount);
         }
 
         if (rightEarBone != null) {
-            rightEarBone.setRotY(-Mth.cos((float) ageInTicks * breathingSpeed) * earSwingAmount + earBackwardSwing);
-            rightEarBone.setRotZ(-Mth.sin((float) ageInTicks * breathingSpeed) * earTwistAmount);
+            rightEarBone.setRotY(-Mth.cos((float) animationTicks * breathingSpeed) * earSwingAmount + earBackwardSwing);
+            rightEarBone.setRotZ(-Mth.sin((float) animationTicks * breathingSpeed) * earTwistAmount);
         }
 
         if (tailBone != null) {
-            tailBone.setRotY(Mth.cos((float) ageInTicks * breathingSpeed) * 0.15F);
+            tailBone.setRotY(Mth.cos((float) animationTicks * breathingSpeed) * 0.15F);
         }
     }
 }
