@@ -45,3 +45,8 @@ jobs:
 
           # 明确指定 Loader，防止自动识别出错
           loaders: neoforge
+
+          version-type: ${{ github.event.release.prerelease && 'beta' || 'release' }}
+
+          dependencies: |
+            geckolib(embedded)
