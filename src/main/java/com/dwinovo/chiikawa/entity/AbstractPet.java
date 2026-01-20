@@ -24,7 +24,8 @@ import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import java.util.stream.Collectors;
 import com.mojang.serialization.Dynamic;
 import com.dwinovo.chiikawa.Chiikawa;
@@ -287,20 +288,19 @@ public class AbstractPet extends TamableAnimal implements GeoEntity, RangedAttac
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
-        super.addAdditionalSaveData(tag);
-        tag.put("Backpack", ContainerHelper.saveAllItems(new CompoundTag(), backpack.getItems(), level().registryAccess()));
-        tag.putInt("PetJob", getPetJobId());
-        tag.putByte("PetMode", this.entityData.get(PET_MODE));
+    public void addAdditionalSaveData(ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        ContainerHelper.saveAllItems(output.child("Backpack"), backpack.getItems());
+        output.putInt("PetJob", getPetJobId());
+        output.putByte("PetMode", this.entityData.get(PET_MODE));
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
-        super.readAdditionalSaveData(tag);
-        tag.getCompound("Backpack").ifPresent(backpackTag ->
-            ContainerHelper.loadAllItems(backpackTag, backpack.getItems(), level().registryAccess()));
-        tag.getInt("PetJob").ifPresent(this::setPetJobId);
-        tag.getByte("PetMode").ifPresent(value -> this.entityData.set(PET_MODE, value));
+    public void readAdditionalSaveData(ValueInput input) {
+        super.readAdditionalSaveData(input);
+        input.child("Backpack").ifPresent(backpackInput -> ContainerHelper.loadAllItems(backpackInput, backpack.getItems()));
+        input.getInt("PetJob").ifPresent(this::setPetJobId);
+        this.entityData.set(PET_MODE, input.getByteOr("PetMode", this.entityData.get(PET_MODE)));
         refreshJobFromMainhand(true);
     }
 

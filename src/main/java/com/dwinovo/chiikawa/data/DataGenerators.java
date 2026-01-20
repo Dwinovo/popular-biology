@@ -38,7 +38,7 @@ public final class DataGenerators {
         ModBlockTagsProvider blockTagsProvider = new ModBlockTagsProvider(output, lookupProvider);
         event.getGenerator().addProvider(true, blockTagsProvider);
         event.getGenerator().addProvider(true,
-                new ModItemTagsProvider(output, lookupProvider, blockTagsProvider.contentsGetter()));
+                new ModItemTagsProvider(output, lookupProvider));
         event.getGenerator().addProvider(true,
                 new RecipeProvider.Runner(output, lookupProvider) {
                     @Override
