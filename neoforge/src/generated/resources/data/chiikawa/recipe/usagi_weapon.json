@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "F": "minecraft:flint",
+    "S": "minecraft:stick",
+    "Y": "minecraft:yellow_wool"
+  },
+  "pattern": [
+    "  Y",
+    "FSF",
+    "Y  "
+  ],
+  "result": {
+    "components": {
+      "minecraft:enchantments": {
+        "minecraft:fire_aspect": 1
+      }
+    },
+    "count": 1,
+    "id": "chiikawa:usagi_weapon"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "P": "minecraft:pink_wool",
+    "S": "minecraft:stick"
+  },
+  "pattern": [
+    " P ",
+    " SP",
+    "S  "
+  ],
+  "result": {
+    "components": {
+      "minecraft:enchantments": {
+        "minecraft:knockback": 1
+      }
+    },
+    "count": 1,
+    "id": "chiikawa:chiikawa_weapon"
+  }
+}

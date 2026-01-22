@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "chiikawa:item/hachiware_spawn_egg"
+  }
+}

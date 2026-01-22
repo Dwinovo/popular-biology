@@ -1,0 +1,56 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": [
+    "minecraft:plains",
+    "minecraft:sunflower_plains",
+    "minecraft:savanna",
+    "minecraft:savanna_plateau",
+    "minecraft:desert",
+    "minecraft:swamp",
+    "minecraft:snowy_plains"
+  ],
+  "spawners": [
+    {
+      "type": "chiikawa:usagi",
+      "maxCount": 1,
+      "minCount": 1,
+      "weight": 20
+    },
+    {
+      "type": "chiikawa:hachiware",
+      "maxCount": 1,
+      "minCount": 1,
+      "weight": 20
+    },
+    {
+      "type": "chiikawa:chiikawa",
+      "maxCount": 1,
+      "minCount": 1,
+      "weight": 20
+    },
+    {
+      "type": "chiikawa:shisa",
+      "maxCount": 1,
+      "minCount": 1,
+      "weight": 20
+    },
+    {
+      "type": "chiikawa:momonga",
+      "maxCount": 1,
+      "minCount": 1,
+      "weight": 20
+    },
+    {
+      "type": "chiikawa:kurimanju",
+      "maxCount": 1,
+      "minCount": 1,
+      "weight": 20
+    },
+    {
+      "type": "chiikawa:rakko",
+      "maxCount": 1,
+      "minCount": 1,
+      "weight": 20
+    }
+  ]
+}

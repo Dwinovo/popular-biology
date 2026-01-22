@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "B": "minecraft:blue_wool",
+    "S": "minecraft:stick"
+  },
+  "pattern": [
+    " B ",
+    " SB",
+    "S  "
+  ],
+  "result": {
+    "components": {
+      "minecraft:enchantments": {
+        "minecraft:knockback": 1
+      }
+    },
+    "count": 1,
+    "id": "chiikawa:hachiware_weapon"
+  }
+}
