@@ -51,6 +51,10 @@ public class FabricItemTransferHelper implements IItemTransferHelper {
     }
 
     private static Storage<ItemVariant> findEntityStorage(Entity entity) {
+        Storage<ItemVariant> lookupStorage = FabricCapabilityHelper.ENTITY_ITEM_STORAGE.find(entity, null);
+        if (lookupStorage != null) {
+            return lookupStorage;
+        }
         if (entity instanceof Container container) {
             return InventoryStorage.of(container, null);
         }

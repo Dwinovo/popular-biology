@@ -3,13 +3,14 @@ package com.dwinovo.chiikawa.client.render.layer;
 import com.dwinovo.chiikawa.client.render.AbstractPetRender;
 import com.dwinovo.chiikawa.entity.AbstractPet;
 import com.mojang.datafixers.util.Either;
+import com.mojang.math.Axis;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.tags.ItemTags;
 import software.bernie.geckolib.renderer.layer.BlockAndItemGeoLayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemDisplayContext;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.state.CameraRenderState;
 import com.mojang.blaze3d.vertex.PoseStack;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
@@ -25,13 +26,12 @@ public class PetHeldItemLayer<T extends AbstractPet> extends BlockAndItemGeoLaye
     }
     /**
      * Store the held item so it can be accessed during per-bone rendering.
-     * @param animatable the pet
+     * @param renderState the render state
      * @param relatedObject unused
      * @param renderState the render state
-     * @param partialTick partial tick time
      */
     @Override
-    public void addRenderData(T animatable, Void relatedObject, AbstractPetRender.PetRenderState renderState, float partialTick) {
+    public void addRenderData(T animatable, Void relatedObject, AbstractPetRender.PetRenderState renderState) {
         renderState.addGeckolibData(HELD_ITEM, animatable.getMainHandItem());
     }
     /**
@@ -43,9 +43,9 @@ public class PetHeldItemLayer<T extends AbstractPet> extends BlockAndItemGeoLaye
     @Override
     protected List<RenderData<AbstractPetRender.PetRenderState>> getRelevantBones(AbstractPetRender.PetRenderState renderState, BakedGeoModel model) {
         return List.of(new RenderData<>(
-            RIGHT_HAND_BONE,
-            ItemDisplayContext.THIRD_PERSON_RIGHT_HAND,
-            (bone, state) -> Either.left(state.getOrDefaultGeckolibData(HELD_ITEM, ItemStack.EMPTY))
+                RIGHT_HAND_BONE,
+                ItemDisplayContext.THIRD_PERSON_RIGHT_HAND,
+                (bone, state) -> Either.left(state.getOrDefaultGeckolibData(HELD_ITEM, ItemStack.EMPTY))
         ));
     }
     /**
@@ -53,18 +53,25 @@ public class PetHeldItemLayer<T extends AbstractPet> extends BlockAndItemGeoLaye
      * @param poseStack the pose stack
      * @param bone the bone
      * @param stack the item stack
-     * @param displayContext the item display context
-     * @param renderState the render state
-     * @param renderTasks the render task collector
-     * @param cameraState the camera render state
-     * @param packedLight packed light
-     * @param packedOverlay packed overlay
-     * @param renderColor render color
+     * @param packedOverlay the pet
      */
     @Override
-    protected void submitItemStackRender(PoseStack poseStack, GeoBone bone, ItemStack stack, ItemDisplayContext displayContext,
-                                         AbstractPetRender.PetRenderState renderState, SubmitNodeCollector renderTasks,
-                                         CameraRenderState cameraState, int packedLight, int packedOverlay, int renderColor) {
-        super.submitItemStackRender(poseStack, bone, stack, displayContext, renderState, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
+    protected void renderStackForBone(PoseStack poseStack, GeoBone bone, ItemStack stack, ItemDisplayContext displayContext,
+                                      AbstractPetRender.PetRenderState renderState, MultiBufferSource bufferSource,
+                                      int packedLight, int packedOverlay) {
+        // Apply base scale and item-specific transforms.
+        poseStack.scale(0.80f, 0.80f, 0.80f);
+        if (stack.is(ItemTags.SWORDS) || stack.is(ItemTags.HOES)) {
+            poseStack.mulPose(Axis.XP.rotationDegrees(-90f));
+        }
+        if (stack.is(ItemTags.BOW_ENCHANTABLE)) {
+            poseStack.translate(
+                    0.10F,
+                    -0.20F,
+                    -0.10F
+            );
+            poseStack.mulPose(Axis.XP.rotationDegrees(-90f));
+        }
+        super.renderStackForBone(poseStack, bone, stack, displayContext, renderState, bufferSource, packedLight, packedOverlay);
     }
 }

@@ -11,6 +11,7 @@ import com.dwinovo.chiikawa.init.InitMenu;
 import com.dwinovo.chiikawa.init.InitEntity;
 import com.dwinovo.chiikawa.init.InitItems;
 import com.dwinovo.chiikawa.init.InitTabs;
+import com.dwinovo.chiikawa.init.InitCapabilities;
 import com.dwinovo.chiikawa.data.FabricBiomeModifications;
 import com.dwinovo.chiikawa.platform.Services;
 
@@ -27,6 +28,7 @@ public class ChiikawaFabricMod implements ModInitializer {
         InitEntity.init();
         InitItems.init();
         InitTabs.init();
+        InitCapabilities.register(null);
         FabricBiomeModifications.init();
         Services.ENTITY.registerAttributes();
         Services.ENTITY.registerSpawnPlacements();

@@ -7,9 +7,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.transfer.ResourceHandler;
-import net.neoforged.neoforge.transfer.item.ItemResource;
-import net.neoforged.neoforge.transfer.item.ItemUtil;
+import net.neoforged.neoforge.items.IItemHandler;
 
 public class NeoForgeItemTransferHelper implements IItemTransferHelper {
     @Override
@@ -19,7 +17,7 @@ public class NeoForgeItemTransferHelper implements IItemTransferHelper {
 
     @Override
     public int insertIntoBlock(ServerLevel level, BlockPos pos, ItemStack stack, boolean simulate) {
-        ResourceHandler<ItemResource> handler = findBlockHandler(level, pos);
+        IItemHandler handler = findBlockHandler(level, pos);
         if (handler == null || stack.isEmpty()) {
             return 0;
         }
@@ -29,12 +27,12 @@ public class NeoForgeItemTransferHelper implements IItemTransferHelper {
 
     @Override
     public boolean hasEntityStorage(Entity entity) {
-        return entity.getCapability(Capabilities.Item.ENTITY, null) != null;
+        return entity.getCapability(Capabilities.ItemHandler.ENTITY, null) != null;
     }
 
     @Override
     public int insertIntoEntity(Entity entity, ItemStack stack, boolean simulate) {
-        ResourceHandler<ItemResource> handler = entity.getCapability(Capabilities.Item.ENTITY, null);
+        IItemHandler handler = entity.getCapability(Capabilities.ItemHandler.ENTITY, null);
         if (handler == null || stack.isEmpty()) {
             return 0;
         }
@@ -42,13 +40,13 @@ public class NeoForgeItemTransferHelper implements IItemTransferHelper {
         return stack.getCount() - remaining.getCount();
     }
 
-    private static ResourceHandler<ItemResource> findBlockHandler(ServerLevel level, BlockPos pos) {
-        ResourceHandler<ItemResource> handler = level.getCapability(Capabilities.Item.BLOCK, pos, null);
+    private static IItemHandler findBlockHandler(ServerLevel level, BlockPos pos) {
+        IItemHandler handler = level.getCapability(Capabilities.ItemHandler.BLOCK, pos, null);
         if (handler != null) {
             return handler;
         }
         for (Direction direction : Direction.values()) {
-            handler = level.getCapability(Capabilities.Item.BLOCK, pos, direction);
+            handler = level.getCapability(Capabilities.ItemHandler.BLOCK, pos, direction);
             if (handler != null) {
                 return handler;
             }
@@ -56,10 +54,10 @@ public class NeoForgeItemTransferHelper implements IItemTransferHelper {
         return null;
     }
 
-    private static ItemStack insertIntoHandler(ResourceHandler<ItemResource> handler, ItemStack stack, boolean simulate) {
+    private static ItemStack insertIntoHandler(IItemHandler handler, ItemStack stack, boolean simulate) {
         ItemStack remaining = stack.copy();
-        for (int slot = 0; slot < handler.size() && !remaining.isEmpty(); slot++) {
-            remaining = ItemUtil.insertItemReturnRemaining(handler, slot, remaining, simulate, null);
+        for (int slot = 0; slot < handler.getSlots() && !remaining.isEmpty(); slot++) {
+            remaining = handler.insertItem(slot, remaining, simulate);
         }
         return remaining;
     }

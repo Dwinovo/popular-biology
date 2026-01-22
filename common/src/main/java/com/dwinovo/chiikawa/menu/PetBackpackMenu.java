@@ -34,9 +34,7 @@ public class PetBackpackMenu extends AbstractContainerMenu {
 
         SimpleContainer handler = pet != null ? pet.getBackpack() : new SimpleContainer(AbstractPet.BACKPACK_SIZE);
         this.petSlotCount = handler.getContainerSize();
-        if (pet != null) {
-            handler.startOpen(playerInventory.player);
-        }
+        // Avoid SimpleContainer.startOpen to keep cross-loader bytecode free of ContainerUser.
         if (petSlotCount > 0) {
             this.addSlot(new Slot(handler, 0, 8, 18));
             int slot = 1;
@@ -81,9 +79,7 @@ public class PetBackpackMenu extends AbstractContainerMenu {
     @Override
     public void removed(Player player) {
         super.removed(player);
-        if (pet != null) {
-            pet.getBackpack().stopOpen(player);
-        }
+        // Avoid SimpleContainer.stopOpen to keep cross-loader bytecode free of ContainerUser.
     }
 
     @Override
@@ -137,4 +133,3 @@ public class PetBackpackMenu extends AbstractContainerMenu {
         return result;
     }
 }
-

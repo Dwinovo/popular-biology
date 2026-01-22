@@ -55,7 +55,7 @@ public final class InitItems {
         return Services.REGISTRY.<SpawnEggItem>register(
             BuiltInRegistries.ITEM,
             id,
-            () -> new SpawnEggItem(new Item.Properties().setId(key).spawnEgg(type.get()))
+            () -> new SpawnEggItem(type.get(), new Item.Properties().setId(key))
         );
     }
 

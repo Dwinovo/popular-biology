@@ -7,7 +7,6 @@ import net.minecraft.world.entity.EntityType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.transfer.item.VanillaContainerWrapper;
 
 public class NeoForgeCapabilityHelper implements ICapabilityHelper {
     @Override
@@ -27,7 +26,7 @@ public class NeoForgeCapabilityHelper implements ICapabilityHelper {
     }
 
     private static <T extends AbstractPet> void registerPet(RegisterCapabilitiesEvent event, EntityType<T> type) {
-        event.registerEntity(Capabilities.Item.ENTITY, type, (pet, context) -> VanillaContainerWrapper.of(pet.getBackpack()));
-        event.registerEntity(Capabilities.Item.ENTITY_AUTOMATION, type, (pet, context) -> VanillaContainerWrapper.of(pet.getBackpack()));
+        event.registerEntity(Capabilities.ItemHandler.ENTITY, type, (pet, context) -> new ContainerItemHandler(pet.getBackpack()));
+        event.registerEntity(Capabilities.ItemHandler.ENTITY_AUTOMATION, type, (pet, context) -> new ContainerItemHandler(pet.getBackpack()));
     }
 }

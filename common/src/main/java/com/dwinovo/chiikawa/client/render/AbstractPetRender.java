@@ -3,11 +3,13 @@ package com.dwinovo.chiikawa.client.render;
 import com.dwinovo.chiikawa.client.render.layer.PetHeldItemLayer;
 import com.dwinovo.chiikawa.entity.AbstractPet;
 
-import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
+import net.minecraft.client.renderer.LevelRenderer;
+import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
@@ -18,16 +20,31 @@ import java.util.Map;
 public abstract class AbstractPetRender<T extends AbstractPet> extends GeoEntityRenderer<T, AbstractPetRender.PetRenderState> {
     protected AbstractPetRender(Context renderManager, GeoModel<T> model) {
         super(renderManager, model);
-        withRenderLayer(new PetHeldItemLayer<>(this));
+        addRenderLayer(new PetHeldItemLayer<>(this));
     }
 
     @Override
-    public PetRenderState createRenderState(T entity, Void relatedObject) {
+    public void addRenderData(T animatable, Void relatedObject, PetRenderState renderState) {
+        float partialTick = renderState.getOrDefaultGeckolibData(DataTickets.PARTIAL_TICK, 0f);
+
+        if (!renderState.hasGeckolibData(DataTickets.PACKED_LIGHT)) {
+            renderState.addGeckolibData(DataTickets.PACKED_LIGHT,
+                    LevelRenderer.getLightColor(animatable.level(), animatable.blockPosition()));
+        }
+    }
+
+    @Override
+    protected PetRenderState createBaseRenderState(T entity) {
+        return new PetRenderState();
+    }
+
+    @Override
+    public PetRenderState createRenderState() {
         return new PetRenderState();
     }
 
     public static class PetRenderState extends LivingEntityRenderState implements GeoRenderState {
-        private final Map<DataTicket<?>, Object> geckolibData = new Reference2ObjectOpenHashMap<>();
+        private final Map<DataTicket<?>, Object> geckolibData = new Object2ObjectOpenHashMap<>();
 
         @Override
         public <D> void addGeckolibData(DataTicket<D> dataTicket, @Nullable D data) {
@@ -44,8 +61,10 @@ public abstract class AbstractPetRender<T extends AbstractPet> extends GeoEntity
         public <D> D getGeckolibData(DataTicket<D> dataTicket) {
             Object data = this.geckolibData.get(dataTicket);
 
-            if (data == null && !hasGeckolibData(dataTicket))
-                throw new IllegalArgumentException("Attempted to retrieve data from GeoRenderState that does not exist. Check your code!");
+            if (data == null && !hasGeckolibData(dataTicket)) {
+                GeckoLibConstants.LOGGER.warn("Missing GeoRenderState data for ticket: {}", dataTicket);
+                return null;
+            }
 
             try {
                 return (D)data;
@@ -81,4 +100,3 @@ public abstract class AbstractPetRender<T extends AbstractPet> extends GeoEntity
         }
     }
 }
-

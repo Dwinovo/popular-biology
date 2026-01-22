@@ -2,7 +2,7 @@ package com.dwinovo.chiikawa.platform;
 
 import com.dwinovo.chiikawa.platform.services.IPlatformHelper;
 import net.neoforged.fml.ModList;
-import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.fml.loading.FMLLoader;
 
 public class NeoForgePlatformHelper implements IPlatformHelper {
     @Override
@@ -17,6 +17,6 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public boolean isDevelopmentEnvironment() {
-        return !FMLEnvironment.isProduction();
+        return !FMLLoader.isProduction();
     }
 }
