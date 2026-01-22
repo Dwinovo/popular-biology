@@ -9,13 +9,16 @@ import net.minecraft.server.level.ServerLevel;
 public final class BlockSearch {
     /**
      * Predicate for checking a position during search.
-     * @param level the server level
-     * @param pos the position
-     * @param pet the pet entity
-     * @return whether the position matches
      */
     @FunctionalInterface
     public interface BlockCheckPredicate {
+        /**
+         * Tests whether a position matches the search condition.
+         * @param level the server level
+         * @param pos the position
+         * @param pet the pet entity
+         * @return whether the position matches
+         */
         boolean test(ServerLevel level, BlockPos pos, AbstractPet pet);
     }
 
@@ -69,4 +72,3 @@ public final class BlockSearch {
         };
     }
 }
-

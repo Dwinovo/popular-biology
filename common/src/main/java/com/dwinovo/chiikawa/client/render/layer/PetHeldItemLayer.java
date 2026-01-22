@@ -25,9 +25,10 @@ public class PetHeldItemLayer<T extends AbstractPet> extends BlockAndItemGeoLaye
     }
     /**
      * Store the held item so it can be accessed during per-bone rendering.
-     * @param renderState the render state
+     * @param animatable the pet
      * @param relatedObject unused
      * @param renderState the render state
+     * @param partialTick partial tick time
      */
     @Override
     public void addRenderData(T animatable, Void relatedObject, AbstractPetRender.PetRenderState renderState, float partialTick) {
@@ -52,7 +53,13 @@ public class PetHeldItemLayer<T extends AbstractPet> extends BlockAndItemGeoLaye
      * @param poseStack the pose stack
      * @param bone the bone
      * @param stack the item stack
-     * @param animatable the pet
+     * @param displayContext the item display context
+     * @param renderState the render state
+     * @param renderTasks the render task collector
+     * @param cameraState the camera render state
+     * @param packedLight packed light
+     * @param packedOverlay packed overlay
+     * @param renderColor render color
      */
     @Override
     protected void submitItemStackRender(PoseStack poseStack, GeoBone bone, ItemStack stack, ItemDisplayContext displayContext,
@@ -61,4 +68,3 @@ public class PetHeldItemLayer<T extends AbstractPet> extends BlockAndItemGeoLaye
         super.submitItemStackRender(poseStack, bone, stack, displayContext, renderState, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
     }
 }
-
