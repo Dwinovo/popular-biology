@@ -1,6 +1,7 @@
 package com.dwinovo.chiikawa.data;
 
-import com.dwinovo.chiikawa.Chiikawa;
+import com.dwinovo.chiikawa.Constants;
+import com.dwinovo.chiikawa.data.BiomeSpawnData;
 
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
@@ -19,7 +20,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 public final class ModBiomeModifiers {
     public static final ResourceKey<BiomeModifier> ADD_PET_SPAWNS = ResourceKey.create(
             NeoForgeRegistries.Keys.BIOME_MODIFIERS,
-            ResourceLocation.fromNamespaceAndPath(Chiikawa.MODID, "add_pet_spawns"));
+            ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "add_pet_spawns"));
 
     private ModBiomeModifiers() {
     }
@@ -29,34 +30,19 @@ public final class ModBiomeModifiers {
         HolderGetter<EntityType<?>> entities = context.lookup(Registries.ENTITY_TYPE);
         WeightedList.Builder<SpawnerData> spawners = WeightedList.builder();
 
-        spawners.add(new SpawnerData(entities.getOrThrow(entityKey("usagi")).value(), 1, 1), 20);
-        spawners.add(new SpawnerData(entities.getOrThrow(entityKey("hachiware")).value(), 1, 1), 20);
-        spawners.add(new SpawnerData(entities.getOrThrow(entityKey("chiikawa")).value(), 1, 1), 20);
-        spawners.add(new SpawnerData(entities.getOrThrow(entityKey("shisa")).value(), 1, 1), 20);
-        spawners.add(new SpawnerData(entities.getOrThrow(entityKey("momonga")).value(), 1, 1), 20);
-        spawners.add(new SpawnerData(entities.getOrThrow(entityKey("kurimanju")).value(), 1, 1), 20);
-        spawners.add(new SpawnerData(entities.getOrThrow(entityKey("rakko")).value(), 1, 1), 20);
+        for (BiomeSpawnData.SpawnEntry entry : BiomeSpawnData.SPAWNS) {
+            spawners.add(
+                new SpawnerData(entities.getOrThrow(entry.entityKey()).value(), entry.minCount(), entry.maxCount()),
+                entry.weight()
+            );
+        }
 
-        context.register(ADD_PET_SPAWNS, new AddSpawnsBiomeModifier(
-                HolderSet.direct(
-                        biomes.getOrThrow(biomeKey("plains")),
-                        biomes.getOrThrow(biomeKey("sunflower_plains")),
-                        biomes.getOrThrow(biomeKey("savanna")),
-                        biomes.getOrThrow(biomeKey("savanna_plateau")),
-                        biomes.getOrThrow(biomeKey("desert")),
-                        biomes.getOrThrow(biomeKey("swamp")),
-                        biomes.getOrThrow(biomeKey("snowy_plains"))
-                ),
-                spawners.build()));
-    }
-
-    private static ResourceKey<Biome> biomeKey(String path) {
-        return ResourceKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath("minecraft", path));
-    }
-
-    private static ResourceKey<EntityType<?>> entityKey(String path) {
-        return ResourceKey.create(Registries.ENTITY_TYPE,
-                ResourceLocation.fromNamespaceAndPath(Chiikawa.MODID, path));
+        HolderSet<Biome> targetBiomes = HolderSet.direct(
+            BiomeSpawnData.BIOME_KEYS.stream()
+                .map(biomes::getOrThrow)
+                .toList()
+        );
+        context.register(ADD_PET_SPAWNS, new AddSpawnsBiomeModifier(targetBiomes, spawners.build()));
     }
 }
 

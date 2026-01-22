@@ -3,13 +3,10 @@ package com.dwinovo.chiikawa;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
-import net.neoforged.neoforge.client.gui.ConfigurationScreen;
-import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import com.dwinovo.chiikawa.client.render.impl.ChiikawaRender;
 import com.dwinovo.chiikawa.client.render.impl.HachiwareRender;
 import com.dwinovo.chiikawa.client.render.impl.KurimanjuRender;
@@ -26,10 +23,6 @@ import com.dwinovo.chiikawa.init.InitMenu;
 // Auto-register @SubscribeEvent methods.
 @EventBusSubscriber(modid = Chiikawa.MODID, value = Dist.CLIENT)
 public class ChiikawaClient {
-    public ChiikawaClient(ModContainer container) {
-        container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
-    }
-
     @SubscribeEvent
     static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {

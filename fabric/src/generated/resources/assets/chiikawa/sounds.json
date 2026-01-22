@@ -1,0 +1,81 @@
+{
+  "chiikawa/injured": {
+    "category": "neutral",
+    "sounds": [
+      "chiikawa:chiikawa/injured_1",
+      "chiikawa:chiikawa/injured_2"
+    ]
+  },
+  "chiikawa/tame": {
+    "category": "neutral",
+    "sounds": [
+      "chiikawa:chiikawa/tame_1"
+    ]
+  },
+  "hachiware/injured": {
+    "category": "neutral",
+    "sounds": [
+      "chiikawa:hachiware/injured_1"
+    ]
+  },
+  "hachiware/tame": {
+    "category": "neutral",
+    "sounds": [
+      "chiikawa:hachiware/tame_1"
+    ]
+  },
+  "kurimanju/tame": {
+    "category": "neutral",
+    "sounds": [
+      "chiikawa:kurimanju/tame_1"
+    ]
+  },
+  "momonga/injured": {
+    "category": "neutral",
+    "sounds": [
+      "chiikawa:momonga/injured_1"
+    ]
+  },
+  "momonga/tame": {
+    "category": "neutral",
+    "sounds": [
+      "chiikawa:momonga/tame_1"
+    ]
+  },
+  "rakko/tame": {
+    "category": "neutral",
+    "sounds": [
+      "chiikawa:rakko/tame_1"
+    ]
+  },
+  "shisa/tame": {
+    "category": "neutral",
+    "sounds": [
+      "chiikawa:shisa/tame_1"
+    ]
+  },
+  "usagi/ambient": {
+    "category": "neutral",
+    "sounds": [
+      "chiikawa:usagi/ambient_1"
+    ]
+  },
+  "usagi/attack": {
+    "category": "neutral",
+    "sounds": [
+      "chiikawa:usagi/attack_1"
+    ]
+  },
+  "usagi/injured": {
+    "category": "neutral",
+    "sounds": [
+      "chiikawa:usagi/injured_1"
+    ]
+  },
+  "usagi/tame": {
+    "category": "neutral",
+    "sounds": [
+      "chiikawa:usagi/tame_1"
+    ]
+  }
+}

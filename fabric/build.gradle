@@ -11,15 +11,15 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     modImplementation "software.bernie.geckolib:geckolib-fabric-${minecraft_version}:${geckolib_version}"
+    include "software.bernie.geckolib:geckolib-fabric-${minecraft_version}:${geckolib_version}"
+    modCompileOnly "maven.modrinth:jade:${jade_version_fabric}"
+    modRuntimeOnly "maven.modrinth:jade:${jade_version_fabric}"
 }
 
 loom {
     def aw = project(':common').file("src/main/resources/${mod_id}.accesswidener")
     if (aw.exists()) {
         accessWidenerPath.set(aw)
-    }
-    mixin {
-        defaultRefmapName.set("${mod_id}.refmap.json")
     }
     runs {
         client {
@@ -33,6 +33,15 @@ loom {
             setConfigName('Fabric Server')
             ideConfigGenerated(true)
             runDir('runs/server')
+        }
+        datagen {
+            inherit client
+            setConfigName('Fabric Data Generation')
+            ideConfigGenerated(true)
+            runDir('runs/datagen')
+            vmArg("-Dfabric-api.datagen")
+            vmArg("-Dfabric-api.datagen.output-dir=${file('src/generated/resources')}")
+            vmArg("-Dfabric-api.datagen.modid=${mod_id}")
         }
     }
 }
@@ -62,3 +71,5 @@ loom.remapConfigurations.configureEach {
         }
     }
 }
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }

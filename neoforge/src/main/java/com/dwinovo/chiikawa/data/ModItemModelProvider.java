@@ -18,14 +18,13 @@ public final class ModItemModelProvider extends ModelProvider {
     protected void registerModels(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
         generateSpawnEggs(itemModels);
 
-        // Weapons use custom Blockbench models under src/main/resources.
+        // Weapons use custom Blockbench models under resources.
         itemModels.declareCustomModelItem(InitItems.USAGI_WEAPON.get());
         itemModels.declareCustomModelItem(InitItems.HACHIWARE_WEAPON.get());
         itemModels.declareCustomModelItem(InitItems.CHIIKAWA_WEAPON.get());
     }
 
     private static void generateSpawnEggs(ItemModelGenerators itemModels) {
-        // Spawn eggs are flat items in 1.21.5, matching vanilla generation.
         itemModels.generateFlatItem(InitItems.USAGI_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(InitItems.HACHIWARE_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(InitItems.CHIIKAWA_SPAWN_EGG.get(), ModelTemplates.FLAT_ITEM);

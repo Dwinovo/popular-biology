@@ -17,9 +17,14 @@
     "entrypoints": {
         "main": [
             "com.dwinovo.chiikawa.ChiikawaFabricMod"
+        ],
+        "client": [
+            "com.dwinovo.chiikawa.ChiikawaFabricClient"
+        ],
+        "fabric-datagen": [
+            "com.dwinovo.chiikawa.data.FabricDataGenerators"
         ]
     },
-    "mixins": [],
     "depends": {
         "fabricloader": ">=${fabric_loader_version}",
         "fabric-api": "*",

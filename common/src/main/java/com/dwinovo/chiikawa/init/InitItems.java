@@ -1,0 +1,71 @@
+package com.dwinovo.chiikawa.init;
+
+import com.dwinovo.chiikawa.Constants;
+import com.dwinovo.chiikawa.item.ChiikawaWeapon;
+import com.dwinovo.chiikawa.item.HachiwareWeapon;
+import com.dwinovo.chiikawa.item.UsagiWeapon;
+import com.dwinovo.chiikawa.platform.Services;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.SpawnEggItem;
+
+public final class InitItems {
+    public static final Supplier<SpawnEggItem> USAGI_SPAWN_EGG =
+        registerSpawnEgg("usagi_spawn_egg", InitEntity.USAGI_PET, 0xf28907, 0xF2CB07);
+    public static final Supplier<SpawnEggItem> HACHIWARE_SPAWN_EGG =
+        registerSpawnEgg("hachiware_spawn_egg", InitEntity.HACHIWARE_PET, 0x00FFFF, 0x89cff0);
+    public static final Supplier<SpawnEggItem> CHIIKAWA_SPAWN_EGG =
+        registerSpawnEgg("chiikawa_spawn_egg", InitEntity.CHIIKAWA_PET, 0xE7CCCC, 0xEDE8DC);
+    public static final Supplier<SpawnEggItem> SHISA_SPAWN_EGG =
+        registerSpawnEgg("shisa_spawn_egg", InitEntity.SHISA_PET, 0xFFA500, 0xDFFF00);
+    public static final Supplier<SpawnEggItem> MOMONGA_SPAWN_EGG =
+        registerSpawnEgg("momonga_spawn_egg", InitEntity.MOMONGA_PET, 0x0ABAB5, 0x00008B);
+    public static final Supplier<SpawnEggItem> KURIMANJU_SPAWN_EGG =
+        registerSpawnEgg("kurimanju_spawn_egg", InitEntity.KURIMANJU_PET, 0xdac24e, 0xda8b4e);
+    public static final Supplier<SpawnEggItem> RAKKO_SPAWN_EGG =
+        registerSpawnEgg("rakko_spawn_egg", InitEntity.RAKKO_PET, 0xeaffd0, 0xeaeaea);
+    public static final Supplier<Item> USAGI_WEAPON =
+        registerItem("usagi_weapon", UsagiWeapon::new);
+    public static final Supplier<Item> HACHIWARE_WEAPON =
+        registerItem("hachiware_weapon", HachiwareWeapon::new);
+    public static final Supplier<Item> CHIIKAWA_WEAPON =
+        registerItem("chiikawa_weapon", ChiikawaWeapon::new);
+
+    private InitItems() {
+    }
+
+    public static void init() {
+    }
+
+    private static Supplier<SpawnEggItem> registerSpawnEgg(
+        String name,
+        Supplier<? extends EntityType<? extends Mob>> type,
+        int primaryColor,
+        int secondaryColor
+    ) {
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, name);
+        ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, id);
+        return Services.REGISTRY.<SpawnEggItem>register(
+            BuiltInRegistries.ITEM,
+            id,
+            () -> new SpawnEggItem(new Item.Properties().setId(key).spawnEgg(type.get()))
+        );
+    }
+
+    private static <T extends Item> Supplier<T> registerItem(String name, Function<Item.Properties, T> factory) {
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, name);
+        ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, id);
+        return Services.REGISTRY.<T>register(
+            BuiltInRegistries.ITEM,
+            id,
+            () -> factory.apply(new Item.Properties().setId(key))
+        );
+    }
+}
