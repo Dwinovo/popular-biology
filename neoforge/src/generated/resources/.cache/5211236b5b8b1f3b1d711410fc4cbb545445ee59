@@ -1,8 +1,0 @@
-// 1.21.10	2026-01-22T13:37:50.954156	Tags for minecraft:item mod id chiikawa
-0d7a4c11ebf0aae0af19bacbd70cea4cdca1a342 data/chiikawa/tags/item/entity_archer_tools.json
-13c4fa3d4721abdac45f3b57a362ff5848efcc05 data/chiikawa/tags/item/entity_deliver_items.json
-362d2ba750be71b420cfdf04c16361e2f1ea66c8 data/chiikawa/tags/item/entity_farmer_tools.json
-fe1230a1908d4dadcff787b240a36af6bd94e495 data/chiikawa/tags/item/entity_fencer_tools.json
-c6171b477058ed7a5d8d8d14bcbb63367ab36c44 data/chiikawa/tags/item/entity_pickable_items.json
-a01bbabd97a44d2141d185b9323f4adb23f50290 data/chiikawa/tags/item/entity_plant_crops.json
-79101823cdab68bf75511bec347b138ed18a5948 data/chiikawa/tags/item/entity_tame_foods.json
