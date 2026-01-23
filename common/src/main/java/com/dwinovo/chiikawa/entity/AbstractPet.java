@@ -200,11 +200,12 @@ public class AbstractPet extends TamableAnimal implements GeoEntity, RangedAttac
     }
 
     @Override
-    protected void customServerAiStep(ServerLevel level) {
+    protected void customServerAiStep() {
         InitRegistry.getJobFromId(getPetJobId()).tickBrain(this, this.getBrain());
         Brain<AbstractPet> brain = (Brain<AbstractPet>) getBrain();
-        brain.tick(level, this);
-        super.customServerAiStep(level);
+        ServerLevel serverLevel = (ServerLevel) level();
+        brain.tick(serverLevel, this);
+        super.customServerAiStep();
     }
 
     public Brain<AbstractPet> getBrain() {

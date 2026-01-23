@@ -2,52 +2,132 @@ package com.dwinovo.chiikawa.data;
 
 import com.dwinovo.chiikawa.Constants;
 import com.dwinovo.chiikawa.init.InitItems;
-import net.minecraft.core.HolderGetter;
+import java.util.concurrent.CompletableFuture;
+import java.util.List;
+import java.util.Map;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementRequirements;
+import net.minecraft.advancements.AdvancementRewards;
+import net.minecraft.advancements.Criterion;
+import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.world.item.crafting.ShapedRecipePattern;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
 
-public final class ModRecipeProvider extends RecipeProvider {
-    public ModRecipeProvider(HolderLookup.Provider registries, RecipeOutput output) {
-        super(registries, output);
+public class ModRecipeProvider extends RecipeProvider {
+    private final CompletableFuture<HolderLookup.Provider> registriesFuture;
+
+    public ModRecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+        super(output, registries);
+        this.registriesFuture = registries;
     }
 
     @Override
-    public void buildRecipes() {
-        HolderGetter<Item> itemLookup = this.registries.lookupOrThrow(Registries.ITEM);
-        ShapedRecipeBuilder.shaped(itemLookup, RecipeCategory.COMBAT, InitItems.USAGI_WEAPON.get())
-            .define('Y', Items.YELLOW_WOOL)
-            .define('F', Items.FLINT)
-            .define('S', Items.STICK)
-            .pattern("  Y")
-            .pattern("FSF")
-            .pattern("Y  ")
-            .unlockedBy(getHasName(Items.YELLOW_WOOL), has(Items.YELLOW_WOOL))
-            .save(this.output, ResourceKey.create(Registries.RECIPE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "usagi_weapon")));
+    public void buildRecipes(RecipeOutput recipeOutput) {
+        HolderLookup.Provider registries = registriesFuture.join();
+        Holder<Enchantment> fireAspect = registries.lookupOrThrow(Registries.ENCHANTMENT)
+                .get(Enchantments.FIRE_ASPECT)
+                .orElseThrow();
+        Holder<Enchantment> knockback = registries.lookupOrThrow(Registries.ENCHANTMENT)
+                .get(Enchantments.KNOCKBACK)
+                .orElseThrow();
+        ItemStack result = new ItemStack(InitItems.USAGI_WEAPON.get());
+        result.enchant(fireAspect, 1);
 
-        ShapedRecipeBuilder.shaped(itemLookup, RecipeCategory.COMBAT, InitItems.HACHIWARE_WEAPON.get())
-            .define('B', Items.BLUE_WOOL)
-            .define('S', Items.STICK)
-            .pattern(" B ")
-            .pattern(" SB")
-            .pattern("S  ")
-            .unlockedBy(getHasName(Items.BLUE_WOOL), has(Items.BLUE_WOOL))
-            .save(this.output, ResourceKey.create(Registries.RECIPE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "hachiware_weapon")));
+        saveEnchantedShaped(
+                recipeOutput,
+                RecipeCategory.COMBAT,
+                result,
+                ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "usagi_weapon"),
+                getHasName(Items.YELLOW_WOOL),
+                has(Items.YELLOW_WOOL),
+                Map.of(
+                        'Y', Ingredient.of(Items.YELLOW_WOOL),
+                        'F', Ingredient.of(Items.FLINT),
+                        'S', Ingredient.of(Items.STICK)
+                ),
+                "  Y",
+                "FSF",
+                "Y  "
+        );
 
-        ShapedRecipeBuilder.shaped(itemLookup, RecipeCategory.COMBAT, InitItems.CHIIKAWA_WEAPON.get())
-            .define('P', Items.PINK_WOOL)
-            .define('S', Items.STICK)
-            .pattern(" P ")
-            .pattern(" SP")
-            .pattern("S  ")
-            .unlockedBy(getHasName(Items.PINK_WOOL), has(Items.PINK_WOOL))
-            .save(this.output, ResourceKey.create(Registries.RECIPE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "chiikawa_weapon")));
+        ItemStack hachiwareResult = new ItemStack(InitItems.HACHIWARE_WEAPON.get());
+        hachiwareResult.enchant(knockback, 1);
+        saveEnchantedShaped(
+                recipeOutput,
+                RecipeCategory.COMBAT,
+                hachiwareResult,
+                ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "hachiware_weapon"),
+                getHasName(Items.BLUE_WOOL),
+                has(Items.BLUE_WOOL),
+                Map.of(
+                        'B', Ingredient.of(Items.BLUE_WOOL),
+                        'S', Ingredient.of(Items.STICK)
+                ),
+                " B ",
+                " SB",
+                "S  "
+        );
+
+        ItemStack chiikawaResult = new ItemStack(InitItems.CHIIKAWA_WEAPON.get());
+        chiikawaResult.enchant(knockback, 1);
+        saveEnchantedShaped(
+                recipeOutput,
+                RecipeCategory.COMBAT,
+                chiikawaResult,
+                ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "chiikawa_weapon"),
+                getHasName(Items.PINK_WOOL),
+                has(Items.PINK_WOOL),
+                Map.of(
+                        'P', Ingredient.of(Items.PINK_WOOL),
+                        'S', Ingredient.of(Items.STICK)
+                ),
+                " P ",
+                " SP",
+                "S  "
+        );
+    }
+
+    private void saveEnchantedShaped(
+            RecipeOutput recipeOutput,
+            RecipeCategory category,
+            ItemStack result,
+            ResourceLocation id,
+            String unlockName,
+            Criterion<?> unlockCriterion,
+            Map<Character, Ingredient> key,
+            String... pattern
+    ) {
+        ShapedRecipePattern shapedPattern = ShapedRecipePattern.of(key, List.of(pattern));
+        ShapedRecipe recipe = new ShapedRecipe(
+                "",
+                RecipeBuilder.determineBookCategory(category),
+                shapedPattern,
+                result,
+                true
+        );
+        Advancement.Builder advancement = recipeOutput.advancement()
+                .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id))
+                .rewards(AdvancementRewards.Builder.recipe(id))
+                .requirements(AdvancementRequirements.Strategy.OR)
+                .addCriterion(unlockName, unlockCriterion);
+        recipeOutput.accept(
+                id,
+                recipe,
+                advancement.build(id.withPrefix("recipes/" + category.getFolderName() + "/"))
+        );
     }
 }

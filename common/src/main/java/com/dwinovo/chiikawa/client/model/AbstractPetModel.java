@@ -9,7 +9,6 @@ import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
-import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.animation.AnimationState;
 
 public abstract class AbstractPetModel<T extends AbstractPet> extends GeoModel<T> {
@@ -20,12 +19,12 @@ public abstract class AbstractPetModel<T extends AbstractPet> extends GeoModel<T
     }
 
     @Override
-    public ResourceLocation getModelResource(T animatable, GeoRenderer<T> renderer) {
+    public ResourceLocation getModelResource(T animatable) {
         return ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "geo/" + id + ".geo.json");
     }
 
     @Override
-    public ResourceLocation getTextureResource(T animatable, GeoRenderer<T> renderer) {
+    public ResourceLocation getTextureResource(T animatable) {
         return ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "textures/entities/" + id + ".png");
     }
 

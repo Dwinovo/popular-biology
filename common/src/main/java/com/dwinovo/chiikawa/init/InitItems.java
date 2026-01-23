@@ -5,11 +5,8 @@ import com.dwinovo.chiikawa.item.ChiikawaWeapon;
 import com.dwinovo.chiikawa.item.HachiwareWeapon;
 import com.dwinovo.chiikawa.item.UsagiWeapon;
 import com.dwinovo.chiikawa.platform.Services;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -51,21 +48,19 @@ public final class InitItems {
         int secondaryColor
     ) {
         ResourceLocation id = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, name);
-        ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, id);
         return Services.REGISTRY.<SpawnEggItem>register(
             BuiltInRegistries.ITEM,
             id,
-            () -> new SpawnEggItem(type.get(), primaryColor, secondaryColor, new Item.Properties().setId(key))
+            () -> new SpawnEggItem(type.get(), primaryColor, secondaryColor, new Item.Properties())
         );
     }
 
-    private static <T extends Item> Supplier<T> registerItem(String name, Function<Item.Properties, T> factory) {
+    private static <T extends Item> Supplier<T> registerItem(String name, Supplier<T> factory) {
         ResourceLocation id = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, name);
-        ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, id);
         return Services.REGISTRY.<T>register(
             BuiltInRegistries.ITEM,
             id,
-            () -> factory.apply(new Item.Properties().setId(key))
+            factory
         );
     }
 }
